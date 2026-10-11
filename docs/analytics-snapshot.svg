@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 676" width="960" height="676" role="img" aria-labelledby="svg-title svg-desc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="svg-title">Critique product analytics — analytics snapshot</title>
+  <desc id="svg-desc">Point-in-time event totals for Critique: 1,443 page views, 263 unique visitors, 232 project views, 315 discover views, 12 project submissions. Feedback funnel: 232 project views led to 92 feedback starts (39.7 percent), 65 feedback submit attempts (70.7 percent), and 20 successful feedback submissions (30.8 percent). Feedback submissions are 21.7 percent of feedback starts; project views are 16.1 percent of page views. Secondary metrics: 30 submit errors (46.2 percent of attempts); 123 sign-in prompts, 35 started, 20 succeeded; GitHub 46.2 percent and email 53.8 percent of 52 auth method selections; email verification succeeded for 7 of 16 sent (43.8 percent). Percentages are event ratios, not unique-user conversion rates. Reporting period not supplied; not live analytics.</desc>
+  <rect x="0" y="0" width="960" height="676" fill="#ffffff"/>
+  <text x="36" y="44" font-size="24" font-weight="700" fill="#111111">Critique — product analytics</text>
+  <text x="36" y="68" font-size="13" font-weight="400" fill="#555555">Analytics snapshot · point-in-time event totals · reporting period not supplied</text>
+  <text x="36" y="116" font-size="30" font-weight="700" fill="#111111">1,443</text>
+  <text x="36" y="138" font-size="13" font-weight="400" fill="#555555">Page views</text>
+  <text x="258" y="116" font-size="30" font-weight="700" fill="#111111">263</text>
+  <text x="258" y="138" font-size="13" font-weight="400" fill="#555555">Unique visitors</text>
+  <text x="480" y="116" font-size="30" font-weight="700" fill="#111111">232</text>
+  <text x="480" y="138" font-size="13" font-weight="400" fill="#555555">Project views</text>
+  <text x="480" y="157" font-size="11.5" font-weight="400" fill="#555555">16.1% of page views</text>
+  <text x="702" y="116" font-size="30" font-weight="700" fill="#111111">20</text>
+  <text x="702" y="138" font-size="13" font-weight="400" fill="#555555">Feedback submissions</text>
+  <text x="702" y="157" font-size="11.5" font-weight="400" fill="#555555">21.7% of feedback starts</text>
+  <line x1="36" y1="178" x2="924" y2="178" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="36" y="206" font-size="14" font-weight="600" fill="#111111">Feedback funnel</text>
+  <text x="36" y="239" font-size="13" font-weight="400" fill="#111111">Project views</text>
+  <rect x="214" y="222" width="560" height="24" fill="#f5f5f5"/>
+  <rect x="214" y="222" width="560" height="24" fill="#2563eb"/>
+  <text x="924" y="239" font-size="15" font-weight="700" fill="#111111" text-anchor="end">232</text>
+  <text x="214" y="262" font-size="11.5" font-weight="400" fill="#555555">39.7% · feedback starts per project view</text>
+  <text x="36" y="291" font-size="13" font-weight="400" fill="#111111">Feedback starts</text>
+  <rect x="214" y="274" width="560" height="24" fill="#f5f5f5"/>
+  <rect x="214" y="274" width="222.1" height="24" fill="#2563eb"/>
+  <text x="924" y="291" font-size="15" font-weight="700" fill="#111111" text-anchor="end">92</text>
+  <text x="214" y="314" font-size="11.5" font-weight="400" fill="#555555">70.7% · feedback submit attempts per feedback start</text>
+  <text x="36" y="343" font-size="13" font-weight="400" fill="#111111">Feedback submit attempts</text>
+  <rect x="214" y="326" width="560" height="24" fill="#f5f5f5"/>
+  <rect x="214" y="326" width="156.9" height="24" fill="#2563eb"/>
+  <text x="924" y="343" font-size="15" font-weight="700" fill="#111111" text-anchor="end">65</text>
+  <text x="214" y="366" font-size="11.5" font-weight="400" fill="#555555">30.8% · feedback submits per feedback submit attempt</text>
+  <text x="36" y="395" font-size="13" font-weight="400" fill="#111111">Feedback submissions</text>
+  <rect x="214" y="378" width="560" height="24" fill="#f5f5f5"/>
+  <rect x="214" y="378" width="48.3" height="24" fill="#2563eb"/>
+  <text x="924" y="395" font-size="15" font-weight="700" fill="#111111" text-anchor="end">20</text>
+  <text x="36" y="430" font-size="11.5" font-weight="400" fill="#555555">Percentages are event ratios — event counts divided by event counts, not unique-user conversion rates.</text>
+  <line x1="36" y1="452" x2="924" y2="452" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="36" y="480" font-size="14" font-weight="600" fill="#111111">Secondary metrics</text>
+  <text x="36" y="510" font-size="11.5" font-weight="400" fill="#555555">Discover views</text>
+  <text x="36" y="534" font-size="18" font-weight="700" fill="#111111">315</text>
+  <text x="332" y="510" font-size="11.5" font-weight="400" fill="#555555">Projects submitted</text>
+  <text x="332" y="534" font-size="18" font-weight="700" fill="#111111">12</text>
+  <text x="628" y="510" font-size="11.5" font-weight="400" fill="#555555">Feedback submit errors</text>
+  <text x="628" y="534" font-size="18" font-weight="700" fill="#111111">30</text>
+  <text x="628" y="554" font-size="11.5" font-weight="400" fill="#555555">46.2% of submit attempts</text>
+  <text x="36" y="590" font-size="11.5" font-weight="400" fill="#555555">Sign-ins</text>
+  <text x="36" y="614" font-size="18" font-weight="700" fill="#111111">123 → 35 → 20</text>
+  <text x="36" y="634" font-size="11.5" font-weight="400" fill="#555555">prompts → started → succeeded</text>
+  <text x="332" y="590" font-size="11.5" font-weight="400" fill="#555555">Auth method share</text>
+  <text x="332" y="614" font-size="18" font-weight="700" fill="#111111">GitHub 46.2% · Email 53.8%</text>
+  <text x="332" y="634" font-size="11.5" font-weight="400" fill="#555555">of 52 method selections</text>
+  <text x="628" y="590" font-size="11.5" font-weight="400" fill="#555555">Email verification</text>
+  <text x="628" y="614" font-size="18" font-weight="700" fill="#111111">43.8%</text>
+  <text x="628" y="634" font-size="11.5" font-weight="400" fill="#555555">7 of 16 succeeded</text>
+  <text x="36" y="662" font-size="11" font-weight="400" fill="#555555">Point-in-time snapshot of recorded events — not live analytics; figures do not update automatically. Reporting period not supplied.</text>
+</svg>

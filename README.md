@@ -71,28 +71,23 @@ comparable, and every answer is signal you can act on.
   </tr>
 </table>
 
-## Critique in numbers
+## Product analytics
 
-> Early activity snapshot from the platform.
+> **Analytics snapshot** — point-in-time event totals. The reporting
+> period was not supplied.
 
-Recorded platform activity over the snapshot period. These are recorded
-analytics events, not unique-user conversion rates. A single visitor can
-generate multiple events.
+**Headline:** 1,443 page views · 263 unique visitors · 232 project views ·
+20 feedback submissions.
 
-<table>
-  <tr>
-    <td align="center"><strong>1,228</strong><br>Page views</td>
-    <td align="center"><strong>228</strong><br>Unique visitors</td>
-    <td align="center"><strong>275</strong><br>Discover views</td>
-    <td align="center"><strong>191</strong><br>Project views</td>
-  </tr>
-  <tr>
-    <td align="center"><strong>80</strong><br>Feedback starts</td>
-    <td align="center"><strong>50</strong><br>Feedback submit attempts</td>
-    <td align="center"><strong>14</strong><br>Successful feedback submissions</td>
-    <td align="center"><strong>10</strong><br>Project submissions</td>
-  </tr>
-</table>
+**Funnel:** 232 project views → 92 feedback starts → 65 submit attempts →
+20 successful submissions.
+
+![Critique product analytics snapshot](docs/analytics-snapshot.svg)
+
+These totals are one recorded snapshot — **not live analytics**; the
+figure does not update automatically. All percentages are **event
+ratios** (one event count divided by another), not unique-user conversion
+rates, and a single visitor can generate multiple events.
 
 ## What makes Critique different?
 
