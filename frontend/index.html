@@ -580,7 +580,12 @@
             color: var(--text-secondary);
             font-size: var(--text-sm);
             text-align: center;
-            margin-bottom: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .feedback-cta {
+            margin-top: var(--space-6);
+            text-align: center;
         }
 
         .review-card {
@@ -591,7 +596,7 @@
         }
 
         .review-card + .review-card {
-            margin-top: var(--space-5);
+            margin-top: var(--space-6);
         }
 
         .review-header {
@@ -669,6 +674,7 @@
             color: var(--text-secondary);
             line-height: 1.6;
             margin: 0 0 var(--space-3);
+            max-width: 72ch;
         }
 
         .review-quote {
@@ -682,6 +688,7 @@
             font-size: var(--text-base);
             color: var(--text-primary);
             line-height: 1.65;
+            max-width: 65ch;
         }
 
         .review-meta {
@@ -1049,8 +1056,8 @@
         </section>
 
         <section class="real-feedback">
-            <h2>What builders said</h2>
-            <p class="subtitle">Feedback from people who took a look at Critique.</p>
+            <h2>What builders say</h2>
+            <p class="subtitle">Feedback from builders who took a look at Critique.</p>
 
             <article class="review-card" aria-labelledby="review-josh-name">
                 <div class="review-header">
@@ -1073,9 +1080,9 @@
 
                 <div class="review-meta">
                     <span>External review</span>
-                    <span class="review-meta-dot">·</span>
+                    <span class="review-meta-dot" aria-hidden="true">·</span>
                     <span>Sept 2026</span>
-                    <span class="review-meta-dot">·</span>
+                    <span class="review-meta-dot" aria-hidden="true">·</span>
                     <span>Feedback received → improvements shipped</span>
                 </div>
 
@@ -1103,9 +1110,9 @@
 
                 <div class="review-meta">
                     <span>External review</span>
-                    <span class="review-meta-dot">·</span>
+                    <span class="review-meta-dot" aria-hidden="true">·</span>
                     <span>Twitter</span>
-                    <span class="review-meta-dot">·</span>
+                    <span class="review-meta-dot" aria-hidden="true">·</span>
                     <span>Oct 2026</span>
                 </div>
             </article>
@@ -1125,6 +1132,10 @@
                     <p>“I like the idea behind Critique, especially the focus on helping builders improve their products through real feedback. I appreciate that you took my suggestions seriously and actually implemented improvements based on them. That kind of responsiveness makes a real difference. I'd definitely recommend Critique to other builders who want honest feedback and want to improve their products.”</p>
                 </blockquote>
             </article>
+
+            <div class="feedback-cta">
+                <a href="#submit" class="btn btn-primary">Get feedback on my project</a>
+            </div>
         </section>
 
         <section class="loop">
