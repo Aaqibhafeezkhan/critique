@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Critique — supplied analytics snapshot</title>
+<style>
+  :root {
+    --background: #fafafa;
+    --surface: #ffffff;
+    --surface-muted: #f5f5f5;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --border: #e0e0e0;
+    --border-light: #eeeeee;
+    --accent: #2563eb;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 32px 20px 64px;
+    background: var(--background);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+  }
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0 0 18px;
+  }
+
+  /* Snapshot banner — the required label, kept prominent. */
+  .snapshot-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .snapshot-banner .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--warning);
+    flex: none;
+  }
+
+  .snapshot-banner .full { font-weight: 600; }
+
+  .snapshot-banner .extra {
+    font-weight: 400;
+    color: #a16207;
+  }
+
+  /* Legend distinguishing the three measurement kinds. */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 26px;
+  }
+
+  .kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+
+  .tag-event  { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+  .tag-user   { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+  .tag-rate   { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    margin-bottom: 22px;
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .section-note {
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  /* ---------- KPI cards ---------- */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .kpi .value {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  .kpi .label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  .kpi .sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Funnel / bar rows ---------- */
+  .rows { display: flex; flex-direction: column; gap: 16px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 168px 1fr 74px;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .row .name {
+    font-size: 13.5px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .row .name small {
+    display: block;
+    font-weight: 400;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .track {
+    background: var(--surface-muted);
+    border-radius: var(--radius-sm);
+    height: 26px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    min-width: 3px;
+  }
+
+  .bar.is-error { background: var(--danger); }
+  .bar.is-muted { background: #93c5fd; }
+  .bar.is-zero  { background: transparent; min-width: 0; }
+
+  .row .amount {
+    text-align: right;
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row .amount.zero { color: var(--text-muted); }
+
+  /* Connector labels carrying the rate between stages. */
+  .link-rate {
+    grid-column: 2 / 4;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: -8px;
+  }
+
+  .link-rate b { color: var(--text-secondary); font-weight: 600; }
+
+  /* ---------- Metric grids (auth / share) ---------- */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    gap: 16px;
+  }
+
+  .metric {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    background: var(--background);
+  }
+
+  .metric .m-label {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .metric .m-value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric .m-value.is-zero { color: var(--text-muted); }
+
+  .metric .m-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 5px;
+  }
+
+  /* Stacked split bar (auth method share). */
+  .split {
+    display: flex;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-top: 14px;
+    background: var(--surface-muted);
+  }
+
+  .split .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 0;
+  }
+
+  .split .seg.gh  { background: var(--accent); }
+  .split .seg.em  { background: var(--success); }
+
+  .split-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+
+  .split-key span { display: inline-flex; align-items: center; gap: 6px; }
+
+  .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+    flex: none;
+  }
+
+  .swatch.gh { background: var(--accent); }
+  .swatch.em { background: var(--success); }
+  .swatch.er { background: var(--danger); }
+  .swatch.su { background: var(--success); }
+  .swatch.wa { background: var(--warning); }
+
+  /* ---------- Rates table ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  th {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  td.formula {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  /* ---------- Notes ---------- */
+  .notes {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+  }
+
+  .notes h2 { color: var(--text-primary); margin-bottom: 10px; }
+
+  .notes ul { margin: 0; padding-left: 20px; }
+  .notes li { margin-bottom: 9px; }
+  .notes li:last-child { margin-bottom: 0; }
+
+  .notes code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 1px 5px;
+  }
+
+  footer {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 720px) {
+    body { padding: 22px 14px 48px; }
+    .section { padding: 18px 16px; }
+    .row {
+      grid-template-columns: 1fr auto;
+      gap: 6px 12px;
+    }
+    .row .name { grid-column: 1 / -1; }
+    .row .amount { grid-column: 2; grid-row: 2; }
+    .row .track { grid-column: 1; grid-row: 2; }
+    .link-rate { grid-column: 1 / -1; margin-top: 0; }
+    .kpi .value { font-size: 26px; }
+    table, thead, tbody, th, td, tr { display: block; }
+    thead { display: none; }
+    tr {
+      border-bottom: 1px solid var(--border-light);
+      padding: 8px 0;
+    }
+    tr:last-child { border-bottom: none; }
+    td { border: none; padding: 3px 0; }
+    td.num { text-align: left; font-size: 15px; }
+    td[data-col]::before {
+      content: attr(data-col) ": ";
+      color: var(--text-muted);
+      font-weight: 500;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+    }
+    td.formula::before { font-family: var(--font-sans); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Critique — product analytics</h1>
+  <p class="subtitle">Event totals, visitor counts, and calculated rates for the Critique feedback platform.</p>
+
+  <div class="snapshot-banner">
+    <span class="dot" aria-hidden="true"></span>
+    <span class="full">Supplied analytics snapshot — reporting period unspecified</span>
+    <span class="extra">Point-in-time figures supplied to this report. Not live analytics; values do not update. No time range was provided, so no period-over-period comparison or trend is shown.</span>
+  </div>
+
+  <div class="legend" aria-label="How each figure is measured">
+    <span class="kind"><span class="tag tag-event">event</span> counted occurrences of a single recorded event</span>
+    <span class="kind"><span class="tag tag-user">user</span> distinct visitors from a first-party cookie</span>
+    <span class="kind"><span class="tag tag-rate">rate</span> calculated from the supplied counts</span>
+  </div>
+
+  <!-- ===================== KPI CARDS ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Key figures</h2>
+      <span class="section-note">Counts are events unless marked otherwise</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="value">1,582</div>
+        <div class="label">Page views</div>
+        <div class="sub"><span class="tag tag-event">event</span> page_view</div>
+      </div>
+      <div class="kpi">
+        <div class="value">293</div>
+        <div class="label">Unique visitors</div>
+        <div class="sub"><span class="tag tag-user">user</span> distinct visitor cookies</div>
+      </div>
+      <div class="kpi">
+        <div class="value">215</div>
+        <div class="label">Project views</div>
+        <div class="sub"><span class="tag tag-rate">rate</span> 13.6% of page views</div>
+      </div>
+      <div class="kpi">
+        <div class="value">88</div>
+        <div class="label">Feedback starts</div>
+        <div class="sub"><span class="tag tag-rate">rate</span> 40.9% of project views</div>
+      </div>
+      <div class="kpi">
+        <div class="value">18</div>
+        <div class="label">Feedback submissions</div>
+        <div class="sub"><span class="tag tag-rate">rate</span> 20.5% of feedback starts</div>
+      </div>
+      <div class="kpi">
+        <div class="value">17</div>
+        <div class="label">Project submissions</div>
+        <div class="sub"><span class="tag tag-rate">rate</span> 94.4% of feedback submissions</div>
+      </div>
+      <div class="kpi">
+        <div class="value">339</div>
+        <div class="label">Discover views</div>
+        <div class="sub"><span class="tag tag-event">event</span> discover_view</div>
+      </div>
+      <div class="kpi">
+        <div class="value">18</div>
+        <div class="label">Feedback resumes</div>
+        <div class="sub"><span class="tag tag-event">event</span> draft restored</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ACTIVITY FUNNEL ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Activity funnel</h2>
+      <span class="section-note">Bars scaled to 1,582 page views · event-to-event ratios</span>
+    </div>
+    <div class="rows">
+
+      <div class="row">
+        <div class="name">Page views <small>page_view</small></div>
+        <div class="track"><div class="bar" style="width:100%"></div></div>
+        <div class="amount">1,582</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Project views <small>project_view</small></div>
+        <div class="track"><div class="bar" style="width:13.6%"></div></div>
+        <div class="amount">215</div>
+        <div class="link-rate"><b>13.6%</b> of page views → project views</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Feedback starts <small>feedback_start</small></div>
+        <div class="track"><div class="bar" style="width:5.6%"></div></div>
+        <div class="amount">88</div>
+        <div class="link-rate"><b>40.9%</b> of project views → feedback starts</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Feedback submissions <small>feedback_submit</small></div>
+        <div class="track"><div class="bar" style="width:1.1%"></div></div>
+        <div class="amount">18</div>
+        <div class="link-rate"><b>20.5%</b> of feedback starts → feedback submissions</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Project submissions <small>project_submit</small></div>
+        <div class="track"><div class="bar" style="width:1.1%"></div></div>
+        <div class="amount">17</div>
+        <div class="link-rate"><b>94.4%</b> of feedback submissions → project submissions</div>
+      </div>
+
+    </div>
+    <p class="section-note" style="margin-top:16px;margin-bottom:0;">
+      Discover views (339) are recorded as a separate navigation event and are not a stage of this funnel.
+    </p>
+  </section>
+
+  <!-- ===================== FEEDBACK OUTCOME CHART ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Feedback: starts, attempts, errors, successes</h2>
+      <span class="section-note">Bars scaled to 88 feedback starts</span>
+    </div>
+    <div class="rows">
+
+      <div class="row">
+        <div class="name">Feedback starts <small>feedback_start</small></div>
+        <div class="track"><div class="bar is-muted" style="width:100%"></div></div>
+        <div class="amount">88</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Submit attempts <small>feedback_submit_attempt</small></div>
+        <div class="track"><div class="bar is-muted" style="width:69.3%"></div></div>
+        <div class="amount">61</div>
+        <div class="link-rate"><b>69.3%</b> attempts per feedback start</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Submit errors <small>feedback_submit_error</small></div>
+        <div class="track"><div class="bar is-error" style="width:34.1%"></div></div>
+        <div class="amount">30</div>
+        <div class="link-rate"><b>49.2%</b> errors per submit attempt</div>
+      </div>
+
+      <div class="row">
+        <div class="name">Submissions <small>feedback_submit</small></div>
+        <div class="track"><div class="bar" style="width:20.5%"></div></div>
+        <div class="amount">18</div>
+        <div class="link-rate"><b>29.5%</b> submissions per submit attempt · <b>20.5%</b> per feedback start</div>
+      </div>
+
+    </div>
+
+    <div class="metric-grid" style="margin-top:20px;">
+      <div class="metric">
+        <div class="m-label">Attempts with neither outcome <span class="tag tag-event">event</span></div>
+        <div class="m-value">13</div>
+        <div class="m-sub">61 attempts − 18 submissions − 30 errors = 13 (21.3% of attempts)</div>
+      </div>
+      <div class="metric">
+        <div class="m-label">Submissions + errors <span class="tag tag-rate">rate</span></div>
+        <div class="m-value">78.7%</div>
+        <div class="m-sub">48 of 61 attempts recorded an outcome</div>
+      </div>
+      <div class="metric">
+        <div class="m-label">Error breakdown <span class="tag tag-event">event</span></div>
+        <div class="m-value is-zero" style="font-size:16px;line-height:1.35;">Not recorded</div>
+        <div class="m-sub">The event carries no status code or reason field, so the 30 errors cannot be split by cause from this data.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== AUTHENTICATION ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Authentication</h2>
+      <span class="section-note">Sign-in flow and method preference</span>
+    </div>
+
+    <div class="rows">
+      <div class="row">
+        <div class="name">Login prompts shown <small>login_prompt_shown</small></div>
+        <div class="track"><div class="bar is-muted" style="width:100%"></div></div>
+        <div class="amount">130</div>
+      </div>
+      <div class="row">
+        <div class="name">Login started <small>login_started</small></div>
+        <div class="track"><div class="bar is-muted" style="width:30%"></div></div>
+        <div class="amount">39</div>
+        <div class="link-rate"><b>30.0%</b> of prompts → login started</div>
+      </div>
+      <div class="row">
+        <div class="name">Login success <small>login_success</small></div>
+        <div class="track"><div class="bar" style="width:15.4%"></div></div>
+        <div class="amount">20</div>
+        <div class="link-rate"><b>51.3%</b> of login starts → success · <b>15.4%</b> of prompts → success</div>
+      </div>
+    </div>
+
+    <div class="metric-grid" style="margin-top:22px;">
+      <div class="metric" style="grid-column: span 1;">
+        <div class="m-label">Method selected — GitHub / Email <span class="tag tag-event">event</span></div>
+        <div class="m-value">50% / 50%</div>
+        <div class="m-sub">28 GitHub and 28 email selections, from 56 total method selections</div>
+        <div class="split" role="img" aria-label="GitHub 50 percent, Email 50 percent of 56 method selections">
+          <div class="seg gh" style="width:50%">GitHub 50%</div>
+          <div class="seg em" style="width:50%">Email 50%</div>
+        </div>
+        <div class="split-key">
+          <span><i class="swatch gh"></i> auth_method_selected_github · 28</span>
+          <span><i class="swatch em"></i> auth_method_selected_email · 28</span>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="m-label">Email verification success <span class="tag tag-rate">rate</span></div>
+        <div class="m-value">43.8%</div>
+        <div class="m-sub">7 successful verifications of 16 sent</div>
+        <div class="split" role="img" aria-label="Email verification success 43.8 percent">
+          <div class="seg em" style="width:43.8%">43.8%</div>
+          <div class="seg" style="width:56.2%;background:#e5e7eb;color:#555;">not successful 9</div>
+        </div>
+        <div class="split-key">
+          <span><i class="swatch em"></i> email_verification_success · 7</span>
+          <span><i class="swatch" style="background:#e5e7eb;"></i> email_verification_sent not successful · 9</span>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="m-label">Verification volume <span class="tag tag-event">event</span></div>
+        <div class="m-value">16 → 7</div>
+        <div class="m-sub">email_verification_sent → email_verification_success</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SHARING ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Sharing</h2>
+      <span class="section-note">Action counts only — never counted as completed shares</span>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div class="name">Share UI shown <small>share_ui_shown</small></div>
+        <div class="track"><div class="bar is-muted" style="width:100%"></div></div>
+        <div class="amount">10</div>
+      </div>
+      <div class="row">
+        <div class="name">Share option clicked <small>share_option_clicked</small></div>
+        <div class="track"><div class="bar is-muted" style="width:40%"></div></div>
+        <div class="amount">4</div>
+        <div class="link-rate"><b>40.0%</b> of share UI shown → option clicked</div>
+      </div>
+      <div class="row">
+        <div class="name">Copied post text <small>share_copy_post</small></div>
+        <div class="track"><div class="bar" style="width:10%"></div></div>
+        <div class="amount">1</div>
+      </div>
+      <div class="row">
+        <div class="name">Copied link <small>share_copy_link</small></div>
+        <div class="track"><div class="bar is-zero"></div></div>
+        <div class="amount zero">0</div>
+        <div class="link-rate">No <code>share_copy_link</code> events were recorded. A zero is reported as zero, not as missing data.</div>
+      </div>
+    </div>
+    <p class="section-note" style="margin-top:16px;margin-bottom:0;">
+      Opening a share sheet is not counted as a share. These are recorded user actions, so the totals
+      describe what was clicked, not how many people actually shared Critique.
+    </p>
+  </section>
+
+  <!-- ===================== RATES TABLE ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Calculated rates</h2>
+      <span class="section-note">Every rate recomputed from the supplied counts and matched</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Rate</th>
+          <th>Formula</th>
+          <th style="text-align:right;">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-col="Rate">Project views per page view</td>
+          <td class="formula" data-col="Formula">215 / 1,582</td>
+          <td class="num" data-col="Value">13.6%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Feedback starts per project view</td>
+          <td class="formula" data-col="Formula">88 / 215</td>
+          <td class="num" data-col="Value">40.9%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Feedback submissions per feedback start</td>
+          <td class="formula" data-col="Formula">18 / 88</td>
+          <td class="num" data-col="Value">20.5%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Project submissions per feedback submission</td>
+          <td class="formula" data-col="Formula">17 / 18</td>
+          <td class="num" data-col="Value">94.4%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Submit attempts per feedback start</td>
+          <td class="formula" data-col="Formula">61 / 88</td>
+          <td class="num" data-col="Value">69.3%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Feedback submissions per submit attempt</td>
+          <td class="formula" data-col="Formula">18 / 61</td>
+          <td class="num" data-col="Value">29.5%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Submit errors per submit attempt</td>
+          <td class="formula" data-col="Formula">30 / 61</td>
+          <td class="num" data-col="Value">49.2%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">GitHub share of method selections</td>
+          <td class="formula" data-col="Formula">28 / 56</td>
+          <td class="num" data-col="Value">50%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Email share of method selections</td>
+          <td class="formula" data-col="Formula">28 / 56</td>
+          <td class="num" data-col="Value">50%</td>
+        </tr>
+        <tr>
+          <td data-col="Rate">Email verification success per sent</td>
+          <td class="formula" data-col="Formula">7 / 16</td>
+          <td class="num" data-col="Value">43.8%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="section-note" style="margin-top:14px;margin-bottom:0;">
+      These are ratios of event counts to event counts. They are not unique-user conversion rates:
+      one visitor can produce several events, and events are not tied together per session in this data.
+    </p>
+  </section>
+
+  <!-- ===================== NOTES ===================== -->
+  <section class="notes">
+    <h2>Reading this report</h2>
+    <ul>
+      <li>
+        <strong>Snapshot, not live data.</strong> These values were supplied to this report and are not read
+        from the application database. The owner dashboard at <code>/api/analytics/dashboard</code> continues to
+        compute live totals from recorded events and is untouched by this file. Nothing here updates on its own.
+      </li>
+      <li>
+        <strong>Reporting period unspecified.</strong> No date range accompanied the supplied figures, so the report
+        shows no trend, growth, or comparison line. Any such chart would be invented, so none is shown.
+      </li>
+      <li>
+        <strong>Three kinds of figures.</strong> <span class="tag tag-event">event</span> values count recorded event
+        rows; <span class="tag tag-user">user</span> value counts distinct visitor cookies; <span class="tag tag-rate">rate</span>
+        values are derived by division. Unique visitors (293) is the only user count here — every other number is an event count or a rate.
+      </li>
+      <li>
+        <strong>Submission errors — what the data can and cannot say.</strong> The client fires
+        <code>feedback_submit_error</code> on exactly four paths: HTTP 409 (a response already exists), HTTP 403
+        (expired session / CSRF), any other non-success status, and a thrown network or parse exception. An HTTP 401
+        sign-in gate deliberately fires <em>neither</em> an error nor a success event. Because the
+        <code>analytics_events</code> table stores only <code>event_name</code>, <code>visitor_id</code>,
+        <code>user_id</code>, <code>project_id</code> and <code>created_at</code>, there is no status code or reason
+        dimension — so the 30 errors cannot be attributed to a specific cause from this snapshot, and no cause is
+        claimed here. Note also that the 401 gate counted as an error before commit <code>cb57059</code>
+        (2026-09-30); without a reporting period it is unknown whether the supplied window spans that change.
+      </li>
+      <li>
+        <strong>Attempt arithmetic.</strong> 61 attempts − 18 submissions − 30 errors = 13 attempts with no recorded
+        outcome (21.3%). That residual is consistent with the sign-in-gate path in current code, which records the
+        attempt but no outcome event — but with the reporting period unknown this is an arithmetic observation, not a verified cause.
+      </li>
+      <li>
+        <strong>Zeros are data.</strong> <code>share_copy_link</code> is 0. It is rendered as 0 rather than omitted,
+        because "nobody used this action" and "this action was not measured" mean different things, and this snapshot
+        supplies the metric explicitly.
+      </li>
+    </ul>
+  </section>
+
+  <footer>
+    Supplied analytics snapshot — reporting period unspecified. Point-in-time event totals supplied to this report;
+    not read from the application database, not live, and not updated automatically. Percentages are event-to-event
+    ratios, not unique-user conversion rates. Source events: <code>analytics_events</code> via the analytics
+    allowlist in <code>routes_analytics.py</code>.
+  </footer>
+
+</div>
+</body>
+</html>
