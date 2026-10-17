@@ -9,6 +9,13 @@
 // The panel offers exactly four compact actions — X, Reddit, Copy link,
 // Copy post — each with a real, recognizable icon.
 //
+// Where a browser offers the Web Share API, one extra "Share project" control
+// opens that native sheet with the live post text. Where it does not, no
+// extra control is rendered at all and Copy link remains the fallback, so
+// every browser keeps the same four actions it has today. The sheet opening
+// is never reported as a posted share either — the page cannot see what the
+// person chose to do with it, and dismissing it is a decision, not a failure.
+//
 // Share endpoints, each checked against live HTTP before use:
 //   X      https://twitter.com/intent/tweet?text=…
 //          (301 → x.com/intent/tweet, 200)
@@ -71,6 +78,81 @@ var CritiqueShare = (function() {
             CritiqueUI.showToast('Could not copy. Try again.', 'error');
             return false;
         });
+    }
+
+    // The native share sheet, if this browser has one. The control is only
+    // rendered when it does, so no browser is ever shown a button that opens
+    // nothing — everything else keeps the four actions above as its fallback.
+    function nativeShareSupported() {
+        var nav = navigator;
+        return !!(nav && typeof nav.share === 'function');
+    }
+
+    // Whether this exact payload can go to the sheet right now. `canShare` is
+    // consulted wherever it exists (it can refuse a payload this browser will
+    // not take), and a canShare that throws is answered the same way as one
+    // that says no: fall back, never fail.
+    function canNativeShare(payload) {
+        if (!nativeShareSupported()) return false;
+        if (typeof navigator.canShare !== 'function') return true;
+        try {
+            return navigator.canShare(payload) === true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function nativeSharePayload(data, getPost) {
+        return { title: data.title, text: getPost(), url: data.url };
+    }
+
+    // The one control that opens the native sheet, carrying the post exactly
+    // as it stands (edits included). It is built only where that sheet exists;
+    // when the browser later refuses the payload it copies the link instead,
+    // so the click is never a dead end.
+    function nativeShareAction(data, getPost, projectId) {
+        if (!nativeShareSupported()) return null;
+
+        var current = getPost || function() { return data.post; };
+        var button = make('button', 'btn btn-primary share-native', 'Share project');
+        button.type = 'button';
+        button.title = 'Open your device share sheet';
+
+        button.addEventListener('click', function() {
+            var payload = nativeSharePayload(data, current);
+            track('share_option_clicked', projectId);
+
+            if (!canNativeShare(payload)) {
+                // No sheet will take this: copy the link, exactly as the
+                // Copy link action does, and confirm it the same way.
+                copyText(data.url, 'Link copied');
+                track('share_copy_link', projectId);
+                return;
+            }
+
+            var shared;
+            try {
+                shared = navigator.share(payload);
+            } catch (e) {
+                CritiqueUI.showToast('Could not share. Copy the link instead.', 'error');
+                return;
+            }
+            if (shared && typeof shared.then === 'function') {
+                shared.then(function() {
+                    // The sheet opened and closed. Nothing is reported here:
+                    // we are not told whether anything was shared at all.
+                }, function(err) {
+                    // Dismissing the sheet is a person changing their mind,
+                    // not a failure — say nothing rather than show a false
+                    // error. (AbortError, or code 20 where Safari reports it
+                    // that way.)
+                    if (err && (err.name === 'AbortError' || err.code === 20)) return;
+                    CritiqueUI.showToast('Could not share. Copy the link instead.', 'error');
+                });
+            }
+        });
+
+        return button;
     }
 
     function make(tag, className, text) {
@@ -207,6 +289,18 @@ var CritiqueShare = (function() {
         container.postInput = postInput;
 
         var getLivePost = function() { return postInput.value || defaultPost; };
+
+        // The native sheet sits above the four compact actions, so the
+        // primary way to share comes first. Rendered only where a browser
+        // has one; nothing changes where it does not.
+        var nativeShare = nativeShareAction({
+            projectId: data.projectId,
+            title: data.title,
+            url: url,
+            post: defaultPost
+        }, getLivePost, data.projectId);
+        if (nativeShare) share.appendChild(nativeShare);
+
         share.appendChild(buildActions({
             projectId: data.projectId,
             title: data.title,
@@ -254,6 +348,16 @@ var CritiqueShare = (function() {
         }, null, 'card-share');
         row.setAttribute('role', 'group');
         row.setAttribute('aria-label', 'Share ' + data.title);
+
+        // Same native control above the card's four actions, and only where
+        // the browser offers the sheet.
+        var nativeShare = nativeShareAction({
+            projectId: data.projectId,
+            title: data.title,
+            url: url,
+            post: post
+        }, null, data.projectId);
+        if (nativeShare) host.appendChild(nativeShare);
 
         host.appendChild(row);
         track('share_ui_shown', data.projectId);

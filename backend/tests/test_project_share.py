@@ -147,15 +147,26 @@ def anchors(result):
     return [m for m in result["createdMeta"] if (m.get("tag") or "").lower() == "a"]
 
 
-def submitted_page(tmp_path, fetch_overrides=None, extra_calls=None):
-    """Fill the form, submit it, wait, then run any extra calls."""
+def submitted_page(tmp_path, fetch_overrides=None, extra_calls=None, pre_calls=None):
+    """Fill the form, submit it, wait, then run any extra calls.
+
+    ``pre_calls`` run before the form is filled — that is the only point at
+    which a test can change the environment the page renders into (installing
+    a ``navigator.share`` stub, for instance: the native control is created
+    during the render the submit triggers).
+    """
     fetch = {
         HOMEPAGE_URL: {"status": 200, "body": {"total": 0, "items": []}},
         SUBMIT_URL: {"status": 201, "body": CREATED_PROJECT},
     }
     if fetch_overrides:
         fetch.update(fetch_overrides)
-    calls = list(FILL_PROJECT) + [WAIT_FOR_RENDER] + list(extra_calls or [])
+    calls = (
+        list(pre_calls or [])
+        + list(FILL_PROJECT)
+        + [WAIT_FOR_RENDER]
+        + list(extra_calls or [])
+    )
     return run(tmp_path, "index.html", calls, fetch=fetch)
 
 
@@ -714,3 +725,273 @@ def test_the_share_ui_stacks_on_a_phone_and_keeps_focus_visible():
     # Keyboard users get a visible focus ring on every share control.
     assert ".share-action:focus-visible" in css
     assert "outline: 2px solid var(--focus)" in css
+
+
+# ---------------------------------------------------------------------------
+# The native share sheet (Web Share API), where a browser offers one
+# ---------------------------------------------------------------------------
+#
+# Unit tests of the control's wiring, run through the same Node harness as
+# the rest of this module: navigator.share is stubbed by the scenario rather
+# than driven by a real share sheet, so these do not claim browser-level
+# verification of the sheet itself. The stub is installed before the form is
+# filled because the control only exists once the page has rendered.
+#
+# That is also why every test above -- the four-action panel, the icon count,
+# copy fallback, layout -- still runs against a navigator with no share at
+# all: that is the unsupported-browser case, and it must not have changed.
+
+SHARE_BUTTON = "Share project"
+
+
+def share_stub(outcome="resolve"):
+    """A recording navigator.share, installed before the panel renders.
+
+    ``resolve`` behaves like a sheet that opened and closed normally, ``abort``
+    like one the person dismissed (AbortError), ``abort_code20`` like the
+    dismissal WebKit reports as a DOMException code alone, and ``error`` like a
+    genuine failure to open it.
+    """
+    rejection = {
+        "resolve": "return Promise.resolve();",
+        "abort": "return Promise.reject({name: 'AbortError'});",
+        # Safari/WebKit style: only `code` is carried, with no AbortError name
+        # for the handler to lean on.
+        "abort_code20": "return Promise.reject({code: 20});",
+        "error": "return Promise.reject({name: 'NotAllowedError'});",
+    }[outcome]
+    return {
+        "evaluate": (
+            "window.__shares = []; "
+            "navigator.share = function(data) { "
+            "window.__shares.push(data); " + rejection + " }; "
+            "'installed'"
+        ),
+        "as": "shareStubInstalled",
+    }
+
+
+READ_SHARES = {"evaluate": "window.__shares", "as": "shares"}
+
+
+def error_toasts(result):
+    """Toasts shown with the error style. A dismissed sheet shows none."""
+    return [
+        m
+        for m in result["createdMeta"]
+        if (m.get("className") or "").startswith("toast toast-error")
+    ]
+
+
+def share_action_texts(result):
+    """The four compact actions, in order -- the panel as it must stay."""
+    return [
+        m.get("text")
+        for m in result["createdMeta"]
+        if m.get("className") == "share-action"
+    ]
+
+
+def native_controls(result):
+    return [
+        m
+        for m in result["createdMeta"]
+        if "share-native" in (m.get("className") or "")
+    ]
+
+
+def test_the_native_sheet_receives_the_post_as_edited(tmp_path):
+    result = submitted_page(
+        tmp_path,
+        pre_calls=[share_stub()],
+        extra_calls=[
+            {
+                "evaluate": (
+                    "document.getElementById('message').postInput.value = "
+                    "'Edited before sharing'; 'edited'"
+                ),
+                "as": "edited",
+            },
+            {"clickCreatedContaining": SHARE_BUTTON},
+            READ_SHARES,
+        ],
+    )
+
+    # Exactly one call into the native sheet, carrying the real project and
+    # the post text as it stands right now -- the edit reaches the sheet.
+    assert result["values"]["shares"] == [
+        {"title": "Akiya Scout", "text": "Edited before sharing", "url": PUBLIC_URL}
+    ]
+    # The sheet does the work: nothing copied, no popup, no claim that
+    # anything was shared, and no error either.
+    assert result["clipboard"] == []
+    assert result["opened"] == []
+    assert error_toasts(result) == []
+    assert len(events(result, "share_option_clicked")) == 1
+
+    # The control sits above the unchanged four compact actions.
+    assert [m.get("text") for m in native_controls(result)] == [SHARE_BUTTON]
+    assert share_action_texts(result) == ["X", "Reddit", "Copy link", "Copy post"]
+
+
+def test_without_the_web_share_api_no_native_control_is_offered(tmp_path):
+    # This harness's navigator has no share() at all, which is the case every
+    # unsupported browser falls back to: the panel must be exactly what it
+    # was before native sharing existed.
+    result = submitted_page(tmp_path)
+
+    assert native_controls(result) == []
+    assert share_action_texts(result) == ["X", "Reddit", "Copy link", "Copy post"]
+    icons = [
+        m for m in result["createdMeta"] if m.get("className") == "share-icon"
+    ]
+    assert len(icons) == 4
+    # Nothing fired on its own: no copy, no popup, no error, no share click.
+    assert result["clipboard"] == []
+    assert result["opened"] == []
+    assert error_toasts(result) == []
+    assert len(events(result, "share_option_clicked")) == 0
+
+
+def test_dismissing_the_share_sheet_reports_nothing(tmp_path):
+    result = submitted_page(
+        tmp_path,
+        pre_calls=[share_stub("abort")],
+        extra_calls=[{"clickCreatedContaining": SHARE_BUTTON}, READ_SHARES],
+    )
+
+    # The sheet was opened and dismissed -- a decision, not a failure.
+    assert len(result["values"]["shares"]) == 1
+    assert error_toasts(result) == []
+    assert not any("Could not share" in t for t in texts(result))
+    # And nothing lands on the clipboard behind the person's back.
+    assert result["clipboard"] == []
+    assert len(events(result, "share_copy_link")) == 0
+
+
+def test_dismissing_the_share_sheet_the_safari_way_reports_nothing(tmp_path):
+    """WebKit reports a dismissal as a DOMException with ``code`` 20 and no
+    AbortError name -- it must still be read as a cancellation, never as the
+    failure the error toast would otherwise claim."""
+    result = submitted_page(
+        tmp_path,
+        pre_calls=[share_stub("abort_code20")],
+        extra_calls=[{"clickCreatedContaining": SHARE_BUTTON}, READ_SHARES],
+    )
+
+    assert len(result["values"]["shares"]) == 1
+    assert error_toasts(result) == []
+    assert not any("Could not share" in t for t in texts(result))
+    # The fallback is not triggered by a dismissal either.
+    assert result["clipboard"] == []
+    assert len(events(result, "share_copy_link")) == 0
+
+
+def test_a_share_failure_points_at_the_copy_fallback(tmp_path):
+    result = submitted_page(
+        tmp_path,
+        pre_calls=[share_stub("error")],
+        extra_calls=[{"clickCreatedContaining": SHARE_BUTTON}, READ_SHARES],
+    )
+
+    # A genuine failure is reported once, and points at what still works...
+    assert len(result["values"]["shares"]) == 1
+    assert len(error_toasts(result)) == 1
+    assert any("Copy the link instead" in t for t in texts(result))
+    # ...but nothing is copied without the person asking.
+    assert result["clipboard"] == []
+
+
+def test_when_can_share_refuses_the_control_copies_the_link(tmp_path):
+    # share() exists but canShare() will not take this payload: the control
+    # must never be a dead end, so it copies the URL like Copy link does.
+    result = submitted_page(
+        tmp_path,
+        pre_calls=[
+            share_stub(),
+            {
+                "evaluate": (
+                    "navigator.canShare = function() { return false; }; 'no'"
+                ),
+                "as": "canShareRefused",
+            },
+        ],
+        extra_calls=[{"clickCreatedContaining": SHARE_BUTTON}, READ_SHARES],
+    )
+
+    assert result["values"]["shares"] == []
+    assert result["clipboard"] == [PUBLIC_URL]
+    assert any(t == "Link copied" for t in texts(result))
+    assert len(events(result, "share_copy_link")) == 1
+    assert error_toasts(result) == []
+
+
+def test_a_can_share_that_throws_still_copies(tmp_path):
+    # A canShare that throws is answered like one that says no: fall back,
+    # never fail.
+    result = submitted_page(
+        tmp_path,
+        pre_calls=[
+            share_stub(),
+            {
+                "evaluate": (
+                    "navigator.canShare = function() { "
+                    "throw new TypeError('payload refused'); }; 'throws'"
+                ),
+                "as": "canShareThrew",
+            },
+        ],
+        extra_calls=[{"clickCreatedContaining": SHARE_BUTTON}, READ_SHARES],
+    )
+
+    assert result["values"]["shares"] == []
+    assert result["clipboard"] == [PUBLIC_URL]
+    assert any(t == "Link copied" for t in texts(result))
+    assert error_toasts(result) == []
+
+
+def test_the_card_row_offers_the_native_sheet_too(tmp_path):
+    result = run(
+        tmp_path,
+        "my_projects.html",
+        [
+            share_stub(),
+            {"fn": "loadProjects", "args": []},
+            WAIT_FOR_RENDER,
+            {
+                "evaluate": (
+                    "CritiqueShare.renderCardShareRow("
+                    "document.getElementById('content'), "
+                    "{projectId: 1, title: 'Sentry bot'}); 'row'"
+                ),
+                "as": "row",
+            },
+            {"clickCreatedContaining": SHARE_BUTTON},
+            READ_SHARES,
+        ],
+        fetch={MY_PROJECTS_URL: {"status": 200, "body": [MY_PROJECTS_LIST[0]]}},
+    )
+
+    # That card's own project goes to the sheet, and nothing is copied.
+    shares = result["values"]["shares"]
+    assert len(shares) == 1
+    assert shares[0]["title"] == "Sentry bot"
+    assert shares[0]["url"] == TEST_ORIGIN + "/project/1"
+    assert shares[0]["text"].endswith(TEST_ORIGIN + "/project/1")
+    assert share_action_texts(result) == ["X", "Reddit", "Copy link", "Copy post"]
+    assert result["clipboard"] == []
+
+
+def test_the_native_share_path_is_gated_on_the_api_existing():
+    """Source-level: offered only where the API exists, and dismissal is
+    distinguished from failure (these two are the branches the harness stubs
+    exercise above)."""
+    source = (STATIC_DIR / "share.js").read_text(encoding="utf-8")
+
+    assert "typeof nav.share === 'function'" in source
+    assert "navigator.canShare" in source
+    # Dismissal (AbortError, or Safari's code 20) must never reach an error.
+    assert "AbortError" in source
+    assert "err.code === 20" in source
+    # Rendered only from a guard -- never unconditionally.
+    assert "if (!nativeShareSupported()) return null;" in source
