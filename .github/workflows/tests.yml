@@ -1,0 +1,30 @@
+name: tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r backend/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: python -m pytest tests/ -q
+        working-directory: backend
+        env:
+          # See docs/pull-request-review.md: without this the OAuth state test
+          # fails on any machine that has no .env -- including this runner.
+          # The variable is OAUTH_CLIENT_ID because GitHub rejects names that
+          # start with "GITHUB_" (HTTP 422); the app's own setting keeps its
+          # name GITHUB_CLIENT_ID.
+          # GitHub withholds repository variables from workflows triggered by
+          # pull requests from forks, so those runs get the fallback literal --
+          # enough for the test's contract (the authorize URL must carry
+          # whatever is configured). Push runs to main receive the real value.
+          GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID || 'ci-test-client-id' }}

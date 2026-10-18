@@ -39,6 +39,18 @@ python -m pytest tests/ -q
 Expected: **346 passed**. Install [Node.js](https://nodejs.org) first — the
 frontend-render tests need `node` on PATH and are skipped without it.
 
+For a faster feedback loop while working on a focused change, run a single
+test file, a specific test function, or tests matching a keyword:
+
+```bash
+python -m pytest tests/test_main.py -q
+python -m pytest tests/test_main.py::test_health_check -q
+python -m pytest tests/ -q -k health_check
+```
+
+The frontend-render test modules are skipped when `node` is not on PATH. This
+is expected; install Node.js if your change affects frontend rendering.
+
 ## Development Guidelines
 
 ### Keep it simple
@@ -126,6 +138,52 @@ There is no cost to participate, no payment is ever requested, and no
 personal information beyond a GitHub account is needed. Nothing on GitHub can
 verify that you used the site, and we will not ask you to prove it — the
 step exists to help you, not to police you.
+
+## For maintainers: reviewing a pull request
+
+Reviews are run with one command, from a clone of this repository:
+
+```bash
+python scripts/review_pr.py 123                      # review and report only
+python scripts/review_pr.py 123 --request-changes    # also post the review
+python scripts/review_pr.py 123 --merge              # merge only if every gate passes
+```
+
+The default is non-destructive: it reads the pull request, analyses the diff,
+runs the test suite in a throwaway clone with a stripped environment, and
+prints a report. It never pushes to a contributor's branch, never modifies a
+fork, and never merges without `--merge`. The flag does not override a failed
+gate — a pull request with a failing check, an unresolved blocker, or a
+missing approval is refused, and the report says which gate and why.
+
+Each report ends with `READY`, `CHANGES_REQUESTED`, or `BLOCKED`, followed by
+the merge gate as a checklist. Two of those gates depend on repository
+settings that cannot be checked by a script: continuous integration, and
+branch protection on the default branch. Until both are configured in
+Settings, `--merge` refuses — deliberately, because with nothing configured
+no check and no approval is actually required before merging. The report
+prints the exact steps each time.
+
+Full usage, what each check means, and the limitations:
+[docs/pull-request-review.md](docs/pull-request-review.md).
+
+The surrounding workflow — finding unclaimed work, assigning an issue to
+somebody who has asked for it, checking a pull request's linked issues, and
+closing and thanking only once a merge is confirmed — is
+`scripts/contributor.py`. It reuses the review tool above for every judgement
+about the code, and adds the issue-side work:
+
+```
+python scripts/contributor.py triage                    # what can somebody work on?
+python scripts/contributor.py assign 30 --user USERNAME # only if they asked for it
+python scripts/contributor.py review 57                 # read-only, adds issue context
+python scripts/contributor.py finalize 57 --merge       # merge, close, thank
+```
+
+It will not assign an issue to somebody who has not commented asking for it,
+close an issue that is merely mentioned in a description, thank a contributor
+before the merge is confirmed, or send a second message. Full usage:
+[docs/contributor-workflow.md](docs/contributor-workflow.md).
 
 ## Communication
 
