@@ -89,11 +89,115 @@ are a good place to start. Got a question about the codebase or an approach?
 Ask in [issue #1](https://github.com/BistaDinesh03/critique/issues/1) before
 starting — no question is too small.
 
+Issues are also labeled by area — `frontend`, `backend`, `tests`,
+`accessibility`, `security`, `performance` — so you can filter to work that
+matches what you know, or deliberately stretch into something new.
+
+A curated, reviewed plan of 50 issues lives in
+[docs/issue-roadmap.md](docs/issue-roadmap.md). Each entry states its
+difficulty, the problem it solves, and which files it touches. If you are
+looking for something concrete, start there.
+
+## How we work together on Critique
+
+Critique is a site where builders ask one focused question and other people
+answer it. Contributors are asked to use the product the same way they would
+ask others to use theirs — it is the fastest way to understand what the
+project is for.
+
+For a typical code contribution:
+
+1. **Claim the issue.** Comment on the issue to say you intend to work on
+   it. This avoids two people doing the same work, and it lets the maintainer
+   steer you early if the approach needs a rethink.
+2. **Use Critique once.** Submit a project with one focused question, or give
+   useful feedback on someone else's project. You are not being audited — this
+   is so your first pull request is informed by the product rather than only
+   the code.
+3. **Fork and branch.** Fork the repository, create a branch, and implement
+   the issue.
+4. **Test, and dogfood if it applies.** Run the relevant tests. If your change
+   alters something a visitor would see, try it on Critique itself and ask
+   other builders whether it works.
+5. **Open the pull request.** Describe what you changed, why, and the exact
+   tests you ran.
+
+### Exceptions, stated plainly
+
+This guideline is deliberately light, and it is **not** a gate. It does not
+apply to:
+
+- **Documentation, accessibility, and security fixes** — these help people
+  who cannot necessarily use the site as others do, and requiring product
+  participation first would be a barrier in exactly the wrong place.
+- **Your first contribution** — one contribution is enough. Nobody is asked
+  to participate repeatedly to stay welcome.
+- **Bug reports and issue triage** — these are contributions on their own.
+
+There is no cost to participate, no payment is ever requested, and no
+personal information beyond a GitHub account is needed. Nothing on GitHub can
+verify that you used the site, and we will not ask you to prove it — the
+step exists to help you, not to police you.
+
+## For maintainers: reviewing a pull request
+
+Reviews are run with one command, from a clone of this repository:
+
+```bash
+python scripts/review_pr.py 123                      # review and report only
+python scripts/review_pr.py 123 --request-changes    # also post the review
+python scripts/review_pr.py 123 --merge              # merge only if every gate passes
+```
+
+The default is non-destructive: it reads the pull request, analyses the diff,
+runs the test suite in a throwaway clone with a stripped environment, and
+prints a report. It never pushes to a contributor's branch, never modifies a
+fork, and never merges without `--merge`. The flag does not override a failed
+gate — a pull request with a failing check, an unresolved blocker, or a
+missing approval is refused, and the report says which gate and why.
+
+Each report ends with `READY`, `CHANGES_REQUESTED`, or `BLOCKED`, followed by
+the merge gate as a checklist. Two of those gates depend on repository
+settings that cannot be checked by a script: continuous integration, and
+branch protection on the default branch. Until both are configured in
+Settings, `--merge` refuses — deliberately, because with nothing configured
+no check and no approval is actually required before merging. The report
+prints the exact steps each time.
+
+Full usage, what each check means, and the limitations:
+[docs/pull-request-review.md](docs/pull-request-review.md).
+
+The surrounding workflow — finding unclaimed work, assigning an issue to
+somebody who has asked for it, checking a pull request's linked issues, and
+closing and thanking only once a merge is confirmed — is
+`scripts/contributor.py`. It reuses the review tool above for every judgement
+about the code, and adds the issue-side work:
+
+```
+python scripts/contributor.py triage                    # what can somebody work on?
+python scripts/contributor.py assign 30 --user USERNAME # only if they asked for it
+python scripts/contributor.py review 57                 # read-only, adds issue context
+python scripts/contributor.py finalize 57 --merge       # merge, close, thank
+```
+
+It will not assign an issue to somebody who has not commented asking for it,
+close an issue that is merely mentioned in a description, thank a contributor
+before the merge is confirmed, or send a second message. Full usage:
+[docs/contributor-workflow.md](docs/contributor-workflow.md).
+
 ## Communication
 
 - Be kind and constructive
 - Assume good intentions
 - Focus on the work, not the person
+
+## Reporting a security issue
+
+Please do not open a public issue for a vulnerability. Follow the private
+process described in [SECURITY.md](SECURITY.md), which also documents the
+project's security-relevant behavior. For anything that is not a
+vulnerability, [issue #1](https://github.com/BistaDinesh03/critique/issues/1)
+is a good place to ask.
 
 ## License
 

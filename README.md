@@ -89,6 +89,14 @@ figure does not update automatically. All percentages are **event
 ratios** (one event count divided by another), not unique-user conversion
 rates, and a single visitor can generate multiple events.
 
+> **Two snapshots exist, and they differ.** This figure and the
+> [HTML analytics report](docs/analytics-snapshot.html) were supplied at
+> different times and do not carry the same totals (1,443 vs. 1,582 page
+> views). Neither supplied a reporting period, so neither can be dated or
+> reconciled here. Both datasets are left exactly as supplied — this is
+> tracked in [issue #23](https://github.com/BistaDinesh03/critique/issues/23)
+> for a proper resolution.
+
 ## What makes Critique different?
 
 - **One question** — instead of an open-ended thread that collects "looks
@@ -367,6 +375,20 @@ product feedback are welcome.
 
 [CONTRIBUTING.md](CONTRIBUTING.md) has the full guidelines, and
 [SECURITY.md](SECURITY.md) explains how to report vulnerabilities.
+
+**Looking for something to work on?** Start with the curated plan in
+[docs/issue-roadmap.md](docs/issue-roadmap.md) — 50 reviewed issues with the
+problem, scope, acceptance criteria, difficulty and relevant files spelled
+out for each. Issues are also labeled by area (`frontend`, `backend`,
+`tests`, `accessibility`, `security`, `performance`), and questions are
+welcome in [issue #1](https://github.com/BistaDinesh03/critique/issues/1)
+before you begin.
+
+Contributors are also encouraged to spend a little time using Critique
+itself — submitting a project or giving feedback — before their first pull
+request. [CONTRIBUTING.md](CONTRIBUTING.md) explains the guideline and its
+exceptions; it is a way to understand the product, not a barrier to
+contributing.
 
 ## Open source
 

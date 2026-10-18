@@ -635,6 +635,12 @@ img {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
+/* The native share sheet — rendered only where a browser offers one — sits
+   above the four compact actions as the primary way to share. */
+.share-native {
+    margin-top: var(--space-3);
+}
+
 /* The four compact actions: X, Reddit, Copy link, Copy post. A balanced
    grid of light, equal buttons — no gray block, one thin border each. */
 .share-grid {
