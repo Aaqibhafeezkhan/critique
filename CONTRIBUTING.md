@@ -127,6 +127,34 @@ personal information beyond a GitHub account is needed. Nothing on GitHub can
 verify that you used the site, and we will not ask you to prove it — the
 step exists to help you, not to police you.
 
+## For maintainers: reviewing a pull request
+
+Reviews are run with one command, from a clone of this repository:
+
+```bash
+python scripts/review_pr.py 123                      # review and report only
+python scripts/review_pr.py 123 --request-changes    # also post the review
+python scripts/review_pr.py 123 --merge              # merge only if every gate passes
+```
+
+The default is non-destructive: it reads the pull request, analyses the diff,
+runs the test suite in a throwaway clone with a stripped environment, and
+prints a report. It never pushes to a contributor's branch, never modifies a
+fork, and never merges without `--merge`. The flag does not override a failed
+gate — a pull request with a failing check, an unresolved blocker, or a
+missing approval is refused, and the report says which gate and why.
+
+Each report ends with `READY`, `CHANGES_REQUESTED`, or `BLOCKED`, followed by
+the merge gate as a checklist. Two of those gates depend on repository
+settings that cannot be checked by a script: continuous integration, and
+branch protection on the default branch. Until both are configured in
+Settings, `--merge` refuses — deliberately, because with nothing configured
+no check and no approval is actually required before merging. The report
+prints the exact steps each time.
+
+Full usage, what each check means, and the limitations:
+[docs/pull-request-review.md](docs/pull-request-review.md).
+
 ## Communication
 
 - Be kind and constructive
