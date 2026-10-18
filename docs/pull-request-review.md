@@ -162,8 +162,17 @@ In this order:
            env:
              # See the note below: without this the OAuth state test fails
              # on any machine that has no .env -- including this runner.
-             GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID }}
+             GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID || 'ci-test-client-id' }}
    ```
+
+   > **Why there is a fallback literal.**
+   > GitHub does not pass repository variables (or secrets) to workflows
+   > triggered by pull requests **from forks** — only pushes inside the
+   > repository receive them. A fork run therefore sees an empty
+   > `vars.OAUTH_CLIENT_ID` and the OAuth test would fail on every external
+   > pull request. The `||` fallback gives those runs a literal that keeps the
+   > test's contract intact (the authorize URL must carry exactly what is
+   > configured), while push runs to `main` still use the real variable.
 
    > **Why the variable is `OAUTH_CLIENT_ID` and not `GITHUB_CLIENT_ID`.**
    > GitHub rejects any Actions *variable* or *secret* whose name starts with

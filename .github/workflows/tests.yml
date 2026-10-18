@@ -23,4 +23,8 @@ jobs:
           # The variable is OAUTH_CLIENT_ID because GitHub rejects names that
           # start with "GITHUB_" (HTTP 422); the app's own setting keeps its
           # name GITHUB_CLIENT_ID.
-          GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID }}
+          # GitHub withholds repository variables from workflows triggered by
+          # pull requests from forks, so those runs get the fallback literal --
+          # enough for the test's contract (the authorize URL must carry
+          # whatever is configured). Push runs to main receive the real value.
+          GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID || 'ci-test-client-id' }}
