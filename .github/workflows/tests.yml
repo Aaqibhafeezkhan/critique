@@ -20,4 +20,7 @@ jobs:
         env:
           # See docs/pull-request-review.md: without this the OAuth state test
           # fails on any machine that has no .env -- including this runner.
-          GITHUB_CLIENT_ID: ${{ vars.GITHUB_CLIENT_ID }}
+          # The variable is OAUTH_CLIENT_ID because GitHub rejects names that
+          # start with "GITHUB_" (HTTP 422); the app's own setting keeps its
+          # name GITHUB_CLIENT_ID.
+          GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID }}

@@ -162,9 +162,17 @@ In this order:
            env:
              # See the note below: without this the OAuth state test fails
              # on any machine that has no .env -- including this runner.
-             GITHUB_CLIENT_ID: ${{ vars.GITHUB_CLIENT_ID }}
+             GITHUB_CLIENT_ID: ${{ vars.OAUTH_CLIENT_ID }}
    ```
 
+   > **Why the variable is `OAUTH_CLIENT_ID` and not `GITHUB_CLIENT_ID`.**
+   > GitHub rejects any Actions *variable* or *secret* whose name starts with
+   > `GITHUB_` (HTTP 422: "Variable names must not start with GITHUB_"), so
+   > the command `gh variable set GITHUB_CLIENT_ID` cannot run at all. The
+   > variable is therefore named `OAUTH_CLIENT_ID`, and the workflow maps it
+   > onto the process variable the application itself reads,
+   > `GITHUB_CLIENT_ID`.
+   >
    > **Why `GITHUB_CLIENT_ID` is in that workflow.**
    > `backend/app/config.py` defaults it to an empty string, and
    > `tests/test_oauth_state.py` asserts against the `client_id` in the
@@ -173,8 +181,8 @@ In this order:
    > test fails with `KeyError: 'client_id'`. It fails the same way on every
    > branch, so the tool reports it as pre-existing instead of blaming the
    > pull request, but it will still turn a required check red. Set the
-   > repository variable (a GitHub OAuth client id is not secret; a
-   > repository *variable*, or a default in `config.py`, both work)
+   > `OAUTH_CLIENT_ID` repository variable (a GitHub OAuth client id is not
+   > secret; a repository *variable*, or a default in `config.py`, both work)
    > **before** making the check required. Repairing that test is a separate
    > change and is deliberately not done by this tool.
 
