@@ -155,6 +155,24 @@ prints the exact steps each time.
 Full usage, what each check means, and the limitations:
 [docs/pull-request-review.md](docs/pull-request-review.md).
 
+The surrounding workflow — finding unclaimed work, assigning an issue to
+somebody who has asked for it, checking a pull request's linked issues, and
+closing and thanking only once a merge is confirmed — is
+`scripts/contributor.py`. It reuses the review tool above for every judgement
+about the code, and adds the issue-side work:
+
+```
+python scripts/contributor.py triage                    # what can somebody work on?
+python scripts/contributor.py assign 30 --user USERNAME # only if they asked for it
+python scripts/contributor.py review 57                 # read-only, adds issue context
+python scripts/contributor.py finalize 57 --merge       # merge, close, thank
+```
+
+It will not assign an issue to somebody who has not commented asking for it,
+close an issue that is merely mentioned in a description, thank a contributor
+before the merge is confirmed, or send a second message. Full usage:
+[docs/contributor-workflow.md](docs/contributor-workflow.md).
+
 ## Communication
 
 - Be kind and constructive

@@ -1,0 +1,23 @@
+name: tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r backend/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: python -m pytest tests/ -q
+        working-directory: backend
+        env:
+          # See docs/pull-request-review.md: without this the OAuth state test
+          # fails on any machine that has no .env -- including this runner.
+          GITHUB_CLIENT_ID: ${{ vars.GITHUB_CLIENT_ID }}
