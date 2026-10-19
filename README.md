@@ -33,18 +33,20 @@ A 62-second walkthrough of the real product — the homepage, the Discover
 feed, a project page, and the feedback results a builder receives.
 
 <p align="center">
-  <a href="docs/videos/critique-overview.mp4" title="Play the 62-second Critique walkthrough">
+  <a href="https://dineshbista.com.np/critique/videos/critique-overview.mp4" title="Play the 62-second Critique walkthrough">
     <img src="docs/videos/critique-overview-poster.jpg" width="880" alt="Poster frame from the Critique walkthrough: the homepage headline &quot;Stop getting 'Looks good.'&quot; above the buttons Get feedback on my project and Give feedback to a builder. Select the image to open the video player." />
   </a>
 </p>
 
 <p align="center">
-  <strong>Select the poster to play.</strong> It opens in GitHub's video
+  <strong>Select the poster to play.</strong> It opens in your browser's video
   player, which starts only when you press Play — nothing autoplays, and the
   recording is silent (the file has no audio track).<br />
+  If the poster image does not open for you, use this
+  <a href="https://dineshbista.com.np/critique/videos/critique-overview.mp4">direct link to the video</a>.<br />
   Original file: <a href="docs/videos/critique-overview.mp4">docs/videos/critique-overview.mp4</a>
   — 1854×902, 30 fps, 62 s, H.264 MP4, 46.8 MB, committed to this repository
-  so it is included in every clone.
+  so it is included in every clone, and served for playback via GitHub Pages.
 </p>
 
 ## The problem
