@@ -29,15 +29,22 @@
 
 ## See Critique in action
 
-[![Animated preview of Critique: the homepage, the Discover feed, and a project's feedback results](docs/videos/critique-overview-preview.gif)](docs/videos/critique-overview.mp4)
+A 62-second walkthrough of the real product — the homepage, the Discover
+feed, a project page, and the feedback results a builder receives.
 
 <p align="center">
-  <sub><strong>48-second overview</strong> — the animated preview loops three
-  scenes from it; click to watch the full walkthrough.
-  Full file: <a href="docs/videos/critique-overview.mp4">critique-overview.mp4</a>
-  — a 47.8 MB MP4 committed to this repository, plus this 3.4 MB GIF preview,
-  so both are included in every clone.
-  Static frame: <a href="docs/videos/critique-overview-preview.jpg">critique-overview-preview.jpg</a>.</sub>
+  <a href="docs/videos/critique-overview.mp4" title="Play the 62-second Critique walkthrough">
+    <img src="docs/videos/critique-overview-poster.jpg" width="880" alt="Poster frame from the Critique walkthrough: the homepage headline &quot;Stop getting 'Looks good.'&quot; above the buttons Get feedback on my project and Give feedback to a builder. Select the image to open the video player." />
+  </a>
+</p>
+
+<p align="center">
+  <strong>Select the poster to play.</strong> It opens in GitHub's video
+  player, which starts only when you press Play — nothing autoplays, and the
+  recording is silent (the file has no audio track).<br />
+  Original file: <a href="docs/videos/critique-overview.mp4">docs/videos/critique-overview.mp4</a>
+  — 1854×902, 30 fps, 62 s, H.264 MP4, 46.8 MB, committed to this repository
+  so it is included in every clone.
 </p>
 
 ## The problem
@@ -288,7 +295,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-498 tests currently pass. The suite covers API behavior, CSRF, rate
+501 tests currently pass. The suite covers API behavior, CSRF, rate
 limiting, ownership checks, privacy rules, ranking, XSS, analytics
 validation, authentication flows, SEO endpoints, and frontend rendering
 through a Node-based DOM harness (skipped when Node.js is unavailable).
