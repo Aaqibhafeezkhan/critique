@@ -32,23 +32,17 @@
 A 62-second walkthrough of the real product — the homepage, the Discover
 feed, a project page, and the feedback results a builder receives.
 
-<p align="center">
-  <a href="https://dineshbista.com.np/critique/watch.html" title="Play the 62-second Critique walkthrough">
-    <img src="docs/videos/critique-overview-poster.jpg" width="880" alt="Poster frame from the Critique walkthrough: the homepage headline &quot;Stop getting 'Looks good.'&quot; above the buttons Get feedback on my project and Give feedback to a builder. Select the image to open the watch page." />
-  </a>
-</p>
+![Animated GIF preview of the Critique walkthrough: the homepage headline "Stop getting 'Looks good.'" above Get feedback on my project and Give feedback to a builder, followed by the Discover feed's project cards](docs/videos/critique-overview-preview.gif)
 
-<p align="center">
-  <strong>Select the poster to play.</strong> It opens the
-  <a href="https://dineshbista.com.np/critique/watch.html">watch page</a>, where the
-  video plays in an embedded player — press Play to start; nothing autoplays,
-  and the recording is silent (the file has no audio track).<br />
-  If the poster image does not open for you, use this
-  <a href="https://dineshbista.com.np/critique/videos/critique-overview.mp4">direct link to the video</a>.<br />
-  Original file: <a href="docs/videos/critique-overview.mp4">docs/videos/critique-overview.mp4</a>
-  — 1854×902, 30 fps, 62 s, H.264 MP4, 46.8 MB, committed to this repository
-  so it is included in every clone, and played from the GitHub Pages watch page.
-</p>
+**Want the full walkthrough? [Watch the 62-second video.](https://dineshbista.com.np/critique/watch.html)**
+
+The GIF above is a 12-second preview; the full walkthrough runs 62 seconds with
+no audio, and the watch-page player starts only when you press Play. Prefer the
+original file? Use the [direct MP4 link](https://dineshbista.com.np/critique/videos/critique-overview.mp4)
+(46.8 MB).<br />
+Original file: [docs/videos/critique-overview.mp4](docs/videos/critique-overview.mp4)
+— 1854×902, 30 fps, 62 s, H.264 MP4, 46.8 MB, committed to this repository
+so it is included in every clone, and played from the GitHub Pages watch page.
 
 ## The problem
 
