@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="docs/logo-readme.svg#svgView(viewBox(0,0,64,47.5))" alt="Critique" width="72" />
 </p>
 
@@ -20,16 +20,16 @@
 </p>
 
 <p align="center">
-  <a href="https://critique.page/">Try Critique</a> Â·
-  <a href="https://critique.page/discover">Explore projects</a> Â·
-  <a href="https://github.com/BistaDinesh03/critique">Source code</a> Â·
-  <a href="https://github.com/BistaDinesh03/critique/issues">Issues</a> Â·
+  <a href="https://critique.page/">Try Critique</a> ·
+  <a href="https://critique.page/discover">Explore projects</a> ·
+  <a href="https://github.com/BistaDinesh03/critique">Source code</a> ·
+  <a href="https://github.com/BistaDinesh03/critique/issues">Issues</a> ·
   <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
 ## See Critique in action
 
-A 62-second walkthrough of the real product â€” the homepage, the Discover
+A 62-second walkthrough of the real product — the homepage, the Discover
 feed, a project page, and the feedback results a builder receives.
 
 <p align="center">
@@ -40,10 +40,10 @@ feed, a project page, and the feedback results a builder receives.
 
 <p align="center">
   <strong>Select the poster to play.</strong> It opens in GitHub's video
-  player, which starts only when you press Play â€” nothing autoplays, and the
+  player, which starts only when you press Play — nothing autoplays, and the
   recording is silent (the file has no audio track).<br />
   Original file: <a href="docs/videos/critique-overview.mp4">docs/videos/critique-overview.mp4</a>
-  â€” 1854Ã—902, 30 fps, 62 s, H.264 MP4, 46.8 MB, committed to this repository
+  — 1854×902, 30 fps, 62 s, H.264 MP4, 46.8 MB, committed to this repository
   so it is included in every clone.
 </p>
 
@@ -51,7 +51,7 @@ feed, a project page, and the feedback results a builder receives.
 
 You can spend hours building something and still not know whether another
 person understands what it is, what it does, or why it matters. Posting
-"what do you think?" usually earns a quick "looks good!" â€” polite, but not
+"what do you think?" usually earns a quick "looks good!" — polite, but not
 actionable.
 
 Builders are left guessing: Did users understand the project? Would they
@@ -61,8 +61,8 @@ those questions.
 ## The solution
 
 Critique replaces the guesswork with one clear signal. Share your project,
-ask **one focused question** â€” for example, *"Would you understand what
-this does in 10 seconds?"* â€” and receive structured feedback from real
+ask **one focused question** — for example, *"Would you understand what
+this does in 10 seconds?"* — and receive structured feedback from real
 people.
 
 One question keeps the answers comparable, and every answer is signal you
@@ -84,24 +84,24 @@ contains no AI-generated responses.
 
 ## Features
 
-- **Discover** â€” a public feed of projects asking for feedback, ranked
+- **Discover** — a public feed of projects asking for feedback, ranked
   deterministically (need, freshness, question quality, and more)
-- **My Projects** â€” manage your submissions and revisit results
-- **Results dashboard** â€” totals, distribution bars, and written feedback
+- **My Projects** — manage your submissions and revisit results
+- **Results dashboard** — totals, distribution bars, and written feedback
   for each project
-- **One focused question** â€” every project asks a single question, and two
+- **One focused question** — every project asks a single question, and two
   fixed rating questions make responses easy to scan and compare
-- **Private written suggestions** â€” attached to the project, visible only
+- **Private written suggestions** — attached to the project, visible only
   to its owner
-- **Simple sharing** â€” post to X or Reddit, or copy the link, right after
+- **Simple sharing** — post to X or Reddit, or copy the link, right after
   submitting or from My Projects
-- **Dynamic badge** â€” a live SVG response count for your README (below)
-- **Sign-in options** â€” GitHub OAuth or a passwordless email magic link
-- **Privacy-conscious** â€” no raw IP addresses stored, no third-party
+- **Dynamic badge** — a live SVG response count for your README (below)
+- **Sign-in options** — GitHub OAuth or a passwordless email magic link
+- **Privacy-conscious** — no raw IP addresses stored, no third-party
   tracking scripts, minimal analytics data
-- **Open source** â€” the complete implementation is public under the MIT
+- **Open source** — the complete implementation is public under the MIT
   License, and the app runs locally out of the box
-- **SEO support** â€” `robots.txt`, a dynamic `sitemap.xml`, and homepage
+- **SEO support** — `robots.txt`, a dynamic `sitemap.xml`, and homepage
   social-preview metadata
 
 ## Feedback model
@@ -119,22 +119,22 @@ Every response answers two core questions.
   </tr>
 </table>
 
-> Project owners can also receive optional written suggestions â€” visible
+> Project owners can also receive optional written suggestions — visible
 > only to the owner.
 
 ## Feedback badge
 
 Every project has an embeddable SVG badge with its live response count:
 
-- **Badge endpoint:** `GET /badge/{project_id}.svg` â€”
+- **Badge endpoint:** `GET /badge/{project_id}.svg` —
   `https://critique.page/badge/PROJECT_ID.svg`
-- **Links to:** the project page â€” `https://critique.page/project/PROJECT_ID`
+- **Links to:** the project page — `https://critique.page/project/PROJECT_ID`
 
 ```markdown
 [![Critique](https://critique.page/badge/PROJECT_ID.svg)](https://critique.page/project/PROJECT_ID)
 ```
 
-Replace `PROJECT_ID` with your project's ID â€” the number in its Critique
+Replace `PROJECT_ID` with your project's ID — the number in its Critique
 URL. The count is rendered from the database on each request, and 1000+
 displays as `1k+`.
 
@@ -145,11 +145,11 @@ displays as `1k+`.
 
 <p align="center">
   <a href="https://critique.page/">
-    <img src="static/og-image.png" alt='Stop getting "Looks good." â€” Ask one question. Get real answers. â€” critique.page' width="600" />
+    <img src="static/og-image.png" alt='Stop getting "Looks good." — Ask one question. Get real answers. — critique.page' width="600" />
   </a>
 </p>
 
-[Open Critique](https://critique.page/) Â·
+[Open Critique](https://critique.page/) ·
 [Explore projects](https://critique.page/discover)
 
 ## Built with
@@ -159,24 +159,24 @@ displays as `1k+`.
 | Web framework | FastAPI (Python 3.11+) |
 | Data access | SQLAlchemy 2.x |
 | Datastores | SQLite (development), PostgreSQL (production) |
-| Frontend | Vanilla HTML/CSS/JavaScript â€” no build step |
+| Frontend | Vanilla HTML/CSS/JavaScript — no build step |
 | Authentication | GitHub OAuth and passwordless email (Resend) |
 | Deployment | Render (`render.yaml`) |
 
 ## Architecture
 
 ```text
-Browser â€” vanilla HTML/CSS/JavaScript
-   â”‚
-   â”‚  HTML pages + JSON API calls
-   â–¼
-FastAPI â€” routes, auth, CSRF, rate limiting
-   â”‚
-   â”‚  SQLAlchemy ORM queries
-   â–¼
-SQLAlchemy â€” models, validation, migrations
-   â”‚
-   â–¼
+Browser — vanilla HTML/CSS/JavaScript
+   │
+   │  HTML pages + JSON API calls
+   ▼
+FastAPI — routes, auth, CSRF, rate limiting
+   │
+   │  SQLAlchemy ORM queries
+   ▼
+SQLAlchemy — models, validation, migrations
+   │
+   ▼
 SQLite (development)  /  PostgreSQL (production)
 ```
 
@@ -222,7 +222,7 @@ render.yaml                   Deployment config
 ## Getting started
 
 **Requirements:** Python 3.11+, Git. Node.js (any recent version) is only
-needed for the frontend-render tests â€” they are skipped when `node` is not
+needed for the frontend-render tests — they are skipped when `node` is not
 on your PATH.
 
 ```bash
@@ -253,7 +253,7 @@ uvicorn app.main:app --reload
 ```
 
 Open http://127.0.0.1:8000. SQLite tables are created automatically on
-startup â€” no separate migration step.
+startup — no separate migration step.
 
 Authentication is optional for local browsing; sign-in is only required to
 submit or manage projects. Setup for GitHub OAuth and email magic links
@@ -262,26 +262,26 @@ is in [docs/github-oauth-setup.md](docs/github-oauth-setup.md).
 
 ## Environment variables
 
-Copy `.env.example` to `.env` and set what you need. `.env` is gitignored â€”
+Copy `.env.example` to `.env` and set what you need. `.env` is gitignored —
 never commit real credentials.
 
 | Variable | Purpose | Default / notes |
 |---|---|---|
 | `APP_ENV` | `development` or `production` | `development` |
 | `APP_URL` | Public base URL | `http://127.0.0.1:8000` |
-| `SECRET_KEY` | Signs session tokens and OAuth state | No default â€” generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SECRET_KEY` | Signs session tokens and OAuth state | No default — generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
 | `DATABASE_URL` | Database connection string | `sqlite:///./critique.db`; use PostgreSQL in production |
-| `GITHUB_CLIENT_ID` | GitHub OAuth app client ID | Optional â€” enables GitHub login |
+| `GITHUB_CLIENT_ID` | GitHub OAuth app client ID | Optional — enables GitHub login |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth app secret | Optional |
 | `GITHUB_REDIRECT_URI` | OAuth callback URL | `http://127.0.0.1:8000/auth/callback` |
 | `SESSION_COOKIE_SECURE` | Set `true` behind HTTPS | `false` |
 | `SESSION_COOKIE_MAX_AGE` | Session lifetime in seconds | Optional; `604800` (7 days) |
-| `RESEND_API_KEY` | Resend API key for magic-link emails | Optional â€” enables email login |
+| `RESEND_API_KEY` | Resend API key for magic-link emails | Optional — enables email login |
 | `EMAIL_FROM` | From address for magic links | Optional; verified in Resend |
 
 ## Database
 
-Development uses SQLite (`critique.db`, gitignored) â€” the default when
+Development uses SQLite (`critique.db`, gitignored) — the default when
 `DATABASE_URL` is unset. On startup the app runs `init_db()`, which creates
 tables and applies lightweight, additive migrations for both SQLite and
 PostgreSQL, so there is no separate migration step. Production uses
@@ -304,21 +304,21 @@ through a Node-based DOM harness (skipped when Node.js is unavailable).
 
 The JSON API is documented in [docs/api.md](docs/api.md). Major categories:
 
-- **Authentication** â€” `/auth/*`: GitHub OAuth, email magic links, session
+- **Authentication** — `/auth/*`: GitHub OAuth, email magic links, session
   check, CSRF token
-- **Projects** â€” `/api/projects/`: create, Discover feed, owner list,
+- **Projects** — `/api/projects/`: create, Discover feed, owner list,
   details, delete
-- **Feedback** â€” `/api/projects/{id}/responses`: submit and read responses
-- **Results** â€” `/api/projects/{id}/results`: aggregates for everyone,
+- **Feedback** — `/api/projects/{id}/responses`: submit and read responses
+- **Results** — `/api/projects/{id}/results`: aggregates for everyone,
   written suggestions for the owner
-- **Badge** â€” `/badge/{id}.svg`: live response count
-- **Stats and analytics** â€” `/api/stats`, `/api/analytics/track`
-- **SEO** â€” `robots.txt`, `sitemap.xml`
+- **Badge** — `/badge/{id}.svg`: live response count
+- **Stats and analytics** — `/api/stats`, `/api/analytics/track`
+- **SEO** — `robots.txt`, `sitemap.xml`
 
 While the app is running, interactive docs are served at `/docs` (Swagger
 UI) and `/redoc`, and a health check is available at `GET /health`.
 
-Example â€” list projects currently looking for feedback (public, no
+Example — list projects currently looking for feedback (public, no
 authentication required):
 
 ```bash
@@ -352,25 +352,25 @@ report a vulnerability.
 
 Deployment is configured in `render.yaml`: a Render web service with a
 PostgreSQL database. `APP_ENV=production` and `SESSION_COOKIE_SECURE=true`
-are set there; secrets â€” `DATABASE_URL`, `SECRET_KEY`, OAuth credentials,
-and email keys â€” are marked `sync: false` and entered manually in the
+are set there; secrets — `DATABASE_URL`, `SECRET_KEY`, OAuth credentials,
+and email keys — are marked `sync: false` and entered manually in the
 Render dashboard, never stored in the repository. See `render.yaml` for the
 full list of expected variables.
 
 ## Product analytics
 
-> **Analytics snapshot** â€” point-in-time event totals. The reporting
+> **Analytics snapshot** — point-in-time event totals. The reporting
 > period was not supplied.
 
-**Headline:** 1,443 page views Â· 263 unique visitors Â· 232 project views Â·
+**Headline:** 1,443 page views · 263 unique visitors · 232 project views ·
 20 feedback submissions.
 
-**Funnel:** 232 project views â†’ 92 feedback starts â†’ 65 submit attempts â†’
+**Funnel:** 232 project views → 92 feedback starts → 65 submit attempts →
 20 successful submissions.
 
 ![Critique product analytics snapshot](docs/analytics-snapshot.svg)
 
-These totals are one recorded snapshot â€” **not live analytics**; the
+These totals are one recorded snapshot — **not live analytics**; the
 figure does not update automatically. All percentages are **event
 ratios** (one event count divided by another), not unique-user conversion
 rates, and a single visitor can generate multiple events.
@@ -379,7 +379,7 @@ rates, and a single visitor can generate multiple events.
 > [HTML analytics report](docs/analytics-snapshot.html) were supplied at
 > different times and do not carry the same totals (1,443 vs. 1,582 page
 > views). Neither supplied a reporting period, so neither can be dated or
-> reconciled here. Both datasets are left exactly as supplied â€” this is
+> reconciled here. Both datasets are left exactly as supplied — this is
 > tracked in [issue #23](https://github.com/BistaDinesh03/critique/issues/23)
 > for a proper resolution.
 
@@ -399,7 +399,7 @@ product feedback are welcome. A good place to start is an issue labeled
 [SECURITY.md](SECURITY.md) explains how to report vulnerabilities.
 
 **Looking for something to work on?** Start with the curated plan in
-[docs/issue-roadmap.md](docs/issue-roadmap.md) â€” 50 reviewed issues with the
+[docs/issue-roadmap.md](docs/issue-roadmap.md) — 50 reviewed issues with the
 problem, scope, acceptance criteria, difficulty and relevant files spelled
 out for each. Issues are also labeled by area (`frontend`, `backend`,
 `tests`, `accessibility`, `security`, `performance`), and questions are
@@ -407,7 +407,7 @@ welcome in [issue #1](https://github.com/BistaDinesh03/critique/issues/1)
 before you begin.
 
 Contributors are also encouraged to spend a little time using Critique
-itself â€” submitting a project or giving feedback â€” before their first pull
+itself — submitting a project or giving feedback — before their first pull
 request. [CONTRIBUTING.md](CONTRIBUTING.md) explains the guideline and its
 exceptions; it is a way to understand the product, not a barrier to
 contributing.
@@ -415,10 +415,10 @@ contributing.
 ## Open source
 
 Critique is open source under the MIT License. The complete implementation
-â€” backend, frontend, tests, and deployment configuration â€” lives at
+— backend, frontend, tests, and deployment configuration — lives at
 [github.com/BistaDinesh03/critique](https://github.com/BistaDinesh03/critique).
 Issues and pull requests are welcome.
 
 ## License
 
-MIT â€” see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
