@@ -185,6 +185,8 @@ close an issue that is merely mentioned in a description, thank a contributor
 before the merge is confirmed, or send a second message. Full usage:
 [docs/contributor-workflow.md](docs/contributor-workflow.md).
 
+For the project-specific review checklist, see the [Maintainer Pull Request Review Checklist](docs/maintainer-guide.md).
+
 ## Communication
 
 - Be kind and constructive
