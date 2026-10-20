@@ -600,13 +600,6 @@ img {
     margin-bottom: var(--space-1);
 }
 
-.share-support {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
-    line-height: var(--leading-normal);
-    margin-bottom: var(--space-4);
-}
-
 .share-post-label {
     display: block;
     font-size: var(--text-xs);
@@ -679,6 +672,19 @@ img {
 .share-action:focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
+}
+
+/* The success panel's clear primary action (copy the post), applied only
+   where no native-sheet button already carries the filled style. */
+.share-action.share-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+}
+
+.share-action.share-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
 .share-icon {
