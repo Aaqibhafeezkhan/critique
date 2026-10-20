@@ -57,7 +57,7 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
-        data = serializer.loads(token, max_age=86400 * 7)
+        data = serializer.loads(token, max_age=settings.SESSION_COOKIE_MAX_AGE)
         user_id = data.get("user_id")
     except (BadSignature, SignatureExpired):
         raise HTTPException(status_code=401, detail="Invalid or expired session")
@@ -77,16 +77,19 @@ def get_current_user_optional(request: Request, db: Session = Depends(get_db)):
         return None
 
 
-def session_cookie_is_valid(request: Request, max_age: int = 86400 * 7) -> bool:
+def session_cookie_is_valid(request: Request, max_age: Optional[int] = None) -> bool:
     """Cheap session probe for stamping early auth state into served pages.
 
     Verifies the cookie's signature and age only -- no database lookup -- so
     page responses stay fast. It is a hint for the first paint: the browser
     still runs /auth/check (DB-backed) and adopts whatever it answers.
+    The configured session lifetime is used unless an explicit max_age is given.
     """
     token = request.cookies.get(SESSION_COOKIE_NAME)
     if not token:
         return False
+    if max_age is None:
+        max_age = settings.SESSION_COOKIE_MAX_AGE
     try:
         serializer.loads(token, max_age=max_age)
         return True
