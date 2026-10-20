@@ -200,10 +200,11 @@ def test_successful_submission_shows_the_live_success_state(tmp_path):
     assert "critique_project_draft" not in result["storage"]["session"]
 
     seen = texts(result)
-    assert "Your project is live!" in seen
-    assert any("has been shared on Critique" in t for t in seen)
-    assert "Let more people discover your project" in seen
-    assert any("reach more builders" in t for t in seen)
+    assert "Your project is live" in seen
+    assert any("Your project is now on Critique" in t for t in seen)
+    assert "Share your project" in seen
+    # The promotional filler paragraph is gone, not merely reworded.
+    assert not any("reach more builders" in t for t in seen)
 
 
 def test_success_state_shows_the_real_title_link_and_question(tmp_path):
@@ -215,7 +216,10 @@ def test_success_state_shows_the_real_title_link_and_question(tmp_path):
     assert "Is the price shown up front?" in seen
 
     link = next(m for m in result["createdMeta"] if m.get("href") == PUBLIC_URL)
-    assert link["text"] == PUBLIC_URL
+    assert link["text"] == "View project"
+    # The URL is the link's destination and the post's content — never
+    # repeated as visible copy in the summary.
+    assert not any(PUBLIC_URL in t for t in seen)
 
     # The share section exists inside the success state, marked optional.
     share = next(
@@ -246,7 +250,7 @@ def test_a_failed_submission_shows_no_success_and_no_share_state(tmp_path):
     assert len(posts(result)) == 1
     # The failure reports honestly and the share UI never appears.
     assert "Error" in (result["ids"].get("message") or "")
-    assert "Your project is live!" not in " ".join(result["created"])
+    assert "Your project is live" not in " ".join(result["created"])
     assert not any(
         m.get("className") == "success-share" for m in result["createdMeta"]
     )
@@ -325,7 +329,9 @@ def test_the_panel_offers_exactly_four_actions(tmp_path):
 
     # Exactly X, Reddit, Copy link, Copy post -- in that order, nothing else.
     actions = [
-        m for m in result["createdMeta"] if m.get("className") == "share-action"
+        m
+        for m in result["createdMeta"]
+        if (m.get("className") or "").split(" ")[0] == "share-action"
     ]
     assert [a.get("text") for a in actions] == [
         "X",
@@ -333,6 +339,9 @@ def test_the_panel_offers_exactly_four_actions(tmp_path):
         "Copy link",
         "Copy post",
     ]
+    # Copy post carries the panel's primary emphasis (the browser here has
+    # no native sheet, so exactly one control in the section is filled).
+    assert "share-primary" in (actions[3].get("className") or "")
 
     # The retired options are gone from the rendered DOM, not merely hidden.
     assert "LinkedIn" not in " ".join(result["created"])
@@ -422,7 +431,7 @@ def test_sharing_is_entirely_optional(tmp_path):
     result = submitted_page(tmp_path)
 
     assert len(events(result, "project_submit")) == 1
-    assert "Your project is live!" in texts(result)
+    assert "Your project is live" in texts(result)
     # The only share event is the section being shown; nothing was copied,
     # nothing was opened.
     assert len(events(result, "share_ui_shown")) == 1
@@ -441,7 +450,7 @@ def test_skip_for_now_collapses_the_share_section_and_keeps_the_success(tmp_path
 
     # The optional section hides; the success state and its link remain.
     assert result["flags"]["share-section"]["display"] == "none"
-    assert "Your project is live!" in texts(result)
+    assert "Your project is live" in texts(result)
     assert any(m.get("href") == PUBLIC_URL for m in result["createdMeta"])
     assert result["flags"]["share-section"]["ariaLabel"] == (
         "Share your project (optional)"
@@ -579,7 +588,9 @@ def test_card_share_row_offers_the_same_four_actions(tmp_path):
 
     # The same compact set on the card, in the same order.
     actions = [
-        m for m in result["createdMeta"] if m.get("className") == "share-action"
+        m
+        for m in result["createdMeta"]
+        if (m.get("className") or "").split(" ")[0] == "share-action"
     ]
     assert [a.get("text") for a in actions] == [
         "X",
@@ -587,6 +598,8 @@ def test_card_share_row_offers_the_same_four_actions(tmp_path):
         "Copy link",
         "Copy post",
     ]
+    # The card row keeps four equal actions -- no primary emphasis there.
+    assert "share-primary" not in (actions[3].get("className") or "")
     # In the card's balanced 2x2 wrapper, with icons.
     assert any(
         m.get("className") == "share-grid card-share" for m in result["createdMeta"]
@@ -788,7 +801,7 @@ def share_action_texts(result):
     return [
         m.get("text")
         for m in result["createdMeta"]
-        if m.get("className") == "share-action"
+        if (m.get("className") or "").split(" ")[0] == "share-action"
     ]
 
 

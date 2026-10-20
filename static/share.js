@@ -203,8 +203,9 @@ var CritiqueShare = (function() {
     // The four actions, compact and balanced: X, Reddit, Copy link, Copy post.
     // `getPost` (optional) returns the post text as it stands right now, so
     // an edited suggested post is what reaches the compose window or the
-    // clipboard — the edit is never overwritten or ignored.
-    function buildActions(data, getPost, extraClass) {
+    // clipboard — the edit is never overwritten or ignored. `primaryCopyPost`
+    // (optional) gives Copy post the filled emphasis of a primary action.
+    function buildActions(data, getPost, extraClass, primaryCopyPost) {
         var current = getPost || function() { return data.post; };
         var urls = shareUrls(current(), data.title, data.url);
         var grid = make('div', 'share-grid' + (extraClass ? ' ' + extraClass : ''));
@@ -230,12 +231,14 @@ var CritiqueShare = (function() {
             'Link copied', 'share_copy_link', data.projectId,
             'Copy the project link'
         ));
-        grid.appendChild(copyAction(
+        var copyPost = copyAction(
             'copy', 'Copy post',
             current,
             'Post copied', 'share_copy_post', data.projectId,
             'Copy the suggested post'
-        ));
+        );
+        if (primaryCopyPost) copyPost.classList.add('share-primary');
+        grid.appendChild(copyPost);
 
         return grid;
     }
@@ -250,16 +253,18 @@ var CritiqueShare = (function() {
         var panel = make('div', 'success-share');
         panel.setAttribute('role', 'status');
 
-        panel.appendChild(make('h3', 'success-title', 'Your project is live!'));
+        panel.appendChild(make('h3', 'success-title', 'Your project is live'));
         panel.appendChild(make('p', 'success-lede',
-            'Your project has been shared on Critique. Invite people to explore it and share their feedback.'));
+            'Your project is now on Critique. Share it to invite feedback.'));
 
         var summary = make('div', 'success-project');
         summary.appendChild(make('strong', 'success-project-title', data.title));
         if (data.description) {
             summary.appendChild(make('p', 'success-project-desc', data.description));
         }
-        var link = make('a', 'success-link', url);
+        // A named destination instead of the raw URL: the summary stays
+        // scannable, and the link still points at the same place.
+        var link = make('a', 'success-link', 'View project');
         link.href = url;
         summary.appendChild(link);
 
@@ -274,9 +279,7 @@ var CritiqueShare = (function() {
         var share = make('section', 'share-section');
         share.id = 'share-section';
         share.setAttribute('aria-label', 'Share your project (optional)');
-        share.appendChild(make('h4', 'share-title', 'Let more people discover your project'));
-        share.appendChild(make('p', 'share-support',
-            'Share your project with your community to reach more builders and get different perspectives.'));
+        share.appendChild(make('h4', 'share-title', 'Share your project'));
 
         share.appendChild(make('p', 'share-post-label', 'Suggested post'));
         var postInput = make('textarea', 'share-post');
@@ -301,12 +304,15 @@ var CritiqueShare = (function() {
         }, getLivePost, data.projectId);
         if (nativeShare) share.appendChild(nativeShare);
 
+        // The clear primary action is copying the post — but only where the
+        // native sheet is absent, so the section never shows two filled
+        // buttons competing side by side.
         share.appendChild(buildActions({
             projectId: data.projectId,
             title: data.title,
             url: url,
             post: defaultPost
-        }, getLivePost));
+        }, getLivePost, null, !nativeShare));
 
         // The way onward, quiet and apart from the sharing actions.
         var actions = make('div', 'share-actions');
