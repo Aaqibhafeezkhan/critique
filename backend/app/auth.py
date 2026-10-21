@@ -1,5 +1,5 @@
 ﻿import httpx
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse, JSONResponse
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from sqlalchemy.orm import Session
@@ -330,11 +330,12 @@ def check_auth(user: User = Depends(get_current_user)):
 
 
 @router.get("/csrf-token")
-def get_csrf_token(request: Request):
-    """Return the CSRF token for the current session."""
+def get_csrf_token(request: Request, response: Response):
+    """Return the CSRF token for the current session, setting the cookie if absent."""
     token = request.cookies.get("critique_csrf")
     if not token:
         token = generate_csrf_token()
+        set_csrf_cookie(response, token)
     return {"csrf_token": token}
 
 # ============================================================================
