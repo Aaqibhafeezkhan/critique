@@ -1481,7 +1481,8 @@
 
         // The success state, shown only after the API confirms the project
         // was created (201 with the created project in the response body).
-        // Sharing lives inside it and stays completely optional.
+        // It stays compact; sharing lives behind one secondary action inside
+        // it and stays completely optional.
         function showProjectLive(data) {
             var msg = document.getElementById('message');
             var project = data && data.project;
@@ -1495,9 +1496,7 @@
             msg.className = 'message';
             CritiqueShare.renderSuccess(msg, {
                 projectId: project.id,
-                title: project.title || '',
-                description: project.description || '',
-                questionText: (data.question && data.question.text) || ''
+                title: project.title || ''
             });
         }
 
