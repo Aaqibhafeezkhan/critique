@@ -328,7 +328,7 @@ Ejemplo — listar los proyectos que buscan comentarios ahora (público, sin
 autenticación):
 
 ```bash
-curl -s https://critique.page/api/projects
+curl -s https://critique.page/api/projects/
 ```
 
 La respuesta está paginada (`items`, `total`, `page`, `page_size`,

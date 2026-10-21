@@ -302,7 +302,7 @@ JSON API 的文档见 [docs/api.md](docs/api.md)。主要分类：
 示例 —— 列出当前正在寻求反馈的项目（公开，无需身份验证）：
 
 ```bash
-curl -s https://critique.page/api/projects
+curl -s https://critique.page/api/projects/
 ```
 
 响应是分页的（`items`、`total`、`page`、`page_size`、`total_pages`），
