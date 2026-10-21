@@ -1,7 +1,7 @@
 ﻿from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import func, update
-from app.database import get_db
+from app.database import get_db, in_int64_range
 from app.models import Project, Question, Response, User, ProjectView, AnalyticsEvent
 from app.schemas import (
     ProjectCreate,
@@ -276,6 +276,8 @@ def list_my_projects(
 @router.get("/{project_id}", response_model=ProjectWithQuestion)
 def get_project(project_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user_optional)):
     """Get a project with its active question. Public endpoint."""
+    if not in_int64_range(project_id):
+        raise HTTPException(status_code=404, detail="Project not found")
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")

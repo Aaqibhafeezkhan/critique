@@ -16,6 +16,17 @@ def test_missing_or_invalid_project_page_returns_404(suffix, project_id):
     assert response.status_code == 404
 
 
+@pytest.mark.parametrize('path', ['/api/projects/{}', '/badge/{}.svg'])
+@pytest.mark.parametrize('project_id', [
+    '999999999', str(2**63 - 1), str(-(2**63)),
+    str(2**63), str(2**100), str(-(2**63) - 1), str(-(2**100)),
+])
+def test_missing_or_out_of_range_project_api_and_badge_return_404(path, project_id):
+    response = TestClient(app, raise_server_exceptions=False).get(path.format(project_id))
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Project not found'}
+
+
 @pytest.mark.parametrize('suffix,filename', [('', 'project_detail.html'), ('/results', 'project_results.html')])
 def test_existing_project_page_preserves_shell_and_cache_headers(suffix, filename):
     with SessionLocal() as db:
