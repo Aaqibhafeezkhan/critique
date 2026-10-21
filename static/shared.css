@@ -437,6 +437,30 @@ img {
     color: #92400e;
 }
 
+/* Full-width status banner for auth failures the backend reports through a
+   redirect (currently only ?error=email_link). Hidden by default and revealed
+   inline by the page script, so it sits directly under <main> and reuses the
+   page gutters. */
+.auth-error-banner {
+    display: none;
+    max-width: 72ch;
+    margin: var(--space-5) auto 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    background: var(--danger-bg);
+    color: #991b1b;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+@media (max-width: 600px) {
+    .auth-error-banner {
+        margin-left: var(--space-3);
+        margin-right: var(--space-3);
+    }
+}
+
 /* ============================================
    Loading / Empty / Error states
    ============================================ */
@@ -600,13 +624,6 @@ img {
     margin-bottom: var(--space-1);
 }
 
-.share-support {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
-    line-height: var(--leading-normal);
-    margin-bottom: var(--space-4);
-}
-
 .share-post-label {
     display: block;
     font-size: var(--text-xs);
@@ -679,6 +696,19 @@ img {
 .share-action:focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
+}
+
+/* The success panel's clear primary action (copy the post), applied only
+   where no native-sheet button already carries the filled style. */
+.share-action.share-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+}
+
+.share-action.share-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
 .share-icon {
