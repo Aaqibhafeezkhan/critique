@@ -96,10 +96,11 @@ def list_projects(
 
     response_count_subq = (
         db.query(
-            Response.question_id,
+            Question.project_id,
             func.count(Response.id).label("response_count"),
         )
-        .group_by(Response.question_id)
+        .join(Response, Response.question_id == Question.id)
+        .group_by(Question.project_id)
         .subquery()
     )
 
@@ -110,7 +111,7 @@ def list_projects(
             func.coalesce(response_count_subq.c.response_count, 0).label("response_count"),
         )
         .outerjoin(question_subq, question_subq.c.project_id == Project.id)
-        .outerjoin(response_count_subq, response_count_subq.c.question_id == question_subq.c.project_id)
+        .outerjoin(response_count_subq, response_count_subq.c.project_id == Project.id)
         .all()
     )
 
@@ -234,10 +235,11 @@ def list_my_projects(
 
     response_count_subq = (
         db.query(
-            Response.question_id,
+            Question.project_id,
             func.count(Response.id).label("response_count"),
         )
-        .group_by(Response.question_id)
+        .join(Response, Response.question_id == Question.id)
+        .group_by(Question.project_id)
         .subquery()
     )
 
@@ -248,7 +250,7 @@ def list_my_projects(
             func.coalesce(response_count_subq.c.response_count, 0).label("response_count"),
         )
         .outerjoin(question_subq, question_subq.c.project_id == Project.id)
-        .outerjoin(response_count_subq, response_count_subq.c.question_id == question_subq.c.project_id)
+        .outerjoin(response_count_subq, response_count_subq.c.project_id == Project.id)
         .filter(Project.owner_id == user.id)
         .order_by(Project.created_at.desc())
         .all()
