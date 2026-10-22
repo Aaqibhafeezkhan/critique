@@ -12,7 +12,7 @@ from app.auth import router as auth_router
 from app.auth import session_cookie_is_valid
 from app.config import settings
 from app.csrf import generate_csrf_token, set_csrf_cookie
-from app.database import get_db, init_db
+from app.database import get_db, in_int64_range, init_db
 from app.models import Project
 from app.routes_analytics import router as analytics_router
 from app.routes_analytics_dashboard import router as analytics_dashboard_router
@@ -146,8 +146,7 @@ def _require_project(project_id: str, db: Session) -> None:
         parsed_id = int(project_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="Project not found") from None
-    # SQLite cannot bind integers outside its signed 64-bit range.
-    if not -(2**63) <= parsed_id < 2**63 or db.get(Project, parsed_id) is None:
+    if not in_int64_range(parsed_id) or db.get(Project, parsed_id) is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
 
