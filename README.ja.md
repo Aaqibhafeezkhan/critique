@@ -312,7 +312,7 @@ JSON API のドキュメントは [docs/api.md](docs/api.md) にあります。�
 例 —— 現在フィードバックを求めているプロジェクトを一覧表示（公開、認証不要）：
 
 ```bash
-curl -s https://critique.page/api/projects
+curl -s https://critique.page/api/projects/
 ```
 
 レスポンスはページネーションされています（`items`、`total`、`page`、`page_size`、
