@@ -12,6 +12,7 @@ import hashlib
 import hmac
 import secrets
 import time
+from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from pydantic import BaseModel, Field
@@ -24,8 +25,26 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 # Separate from the IP-based rate limiter in app/rate_limit.py.
 # Keyed on normalized email to prevent one IP from spamming a single inbox
 # and to prevent a single email from being bombed from many IPs.
-_EMAIL_COOLDOWN = {}
+# The endpoint is unauthenticated, so the map must stay bounded the same way
+# the general rate limiter was bounded in #48: expired entries are swept
+# periodically and a hard cap with LRU eviction bounds memory when new
+# addresses arrive faster than their 60-second windows expire.
+_EMAIL_COOLDOWN: OrderedDict[str, float] = OrderedDict()
 _EMAIL_COOLDOWN_SECONDS = 60
+_EMAIL_COOLDOWN_SWEEP_INTERVAL = 100
+_EMAIL_COOLDOWN_MAX_TRACKED_KEYS = 10_000
+_email_cooldown_calls = 0
+
+
+def _sweep_expired_email_cooldown(now: float) -> None:
+    """Drop entries whose cooldown window has fully elapsed."""
+    expired = [
+        email
+        for email, last in _EMAIL_COOLDOWN.items()
+        if now - last >= _EMAIL_COOLDOWN_SECONDS
+    ]
+    for email in expired:
+        del _EMAIL_COOLDOWN[email]
 
 
 def _email_cooldown_check_and_set(normalized_email: str) -> bool:
@@ -33,11 +52,22 @@ def _email_cooldown_check_and_set(normalized_email: str) -> bool:
 
     Otherwise record the request time and return False (allow).
     """
+    global _email_cooldown_calls
+    _email_cooldown_calls += 1
     now = time.time()
+    if _email_cooldown_calls % _EMAIL_COOLDOWN_SWEEP_INTERVAL == 0:
+        _sweep_expired_email_cooldown(now)
+
     last = _EMAIL_COOLDOWN.get(normalized_email)
     if last is not None and (now - last) < _EMAIL_COOLDOWN_SECONDS:
         return True
+    if (
+        normalized_email not in _EMAIL_COOLDOWN
+        and len(_EMAIL_COOLDOWN) >= _EMAIL_COOLDOWN_MAX_TRACKED_KEYS
+    ):
+        _EMAIL_COOLDOWN.popitem(last=False)
     _EMAIL_COOLDOWN[normalized_email] = now
+    _EMAIL_COOLDOWN.move_to_end(normalized_email)
     return False
 
 serializer = URLSafeTimedSerializer(settings.SECRET_KEY, salt="session")
