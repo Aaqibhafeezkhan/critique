@@ -16,7 +16,10 @@ def test_missing_or_invalid_project_page_returns_404(suffix, project_id):
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize('path', ['/api/projects/{}', '/badge/{}.svg'])
+@pytest.mark.parametrize('path', [
+    '/api/projects/{}', '/badge/{}.svg',
+    '/api/projects/{}/responses', '/api/projects/{}/results',
+])
 @pytest.mark.parametrize('project_id', [
     '999999999', str(2**63 - 1), str(-(2**63)),
     str(2**63), str(2**100), str(-(2**63) - 1), str(-(2**100)),
