@@ -952,6 +952,13 @@
              fills it, so it is the first thing a returning visitor sees. -->
         <div id="auth-error-banner" class="auth-error-banner" role="alert"></div>
 
+        <!-- Shown on load when the backend redirects here with ?auth=cancelled
+             (the visitor pressed Cancel on GitHub's consent screen). Same slot
+             as the banner above, but neutral rather than alarming: cancelling
+             is a normal choice, not a failure. -->
+        <div id="auth-cancelled-banner" class="alert alert-warning" role="status"
+             style="display: none; max-width: 72ch; margin-left: auto; margin-right: auto;"></div>
+
         <section class="hero">
             <h2>Stop getting "Looks good."</h2>
             <p class="subheadline">Ask one question. Get real answers.</p>
@@ -1362,8 +1369,36 @@
             window.history.replaceState(null, '', window.location.pathname + cleaned + window.location.hash);
         }
 
+        // The GitHub OAuth callback sends visitors back to the homepage with
+        // ?auth=cancelled when they press Cancel on GitHub's consent screen
+        // (see /auth/callback). Cancelling is a normal choice, so this says
+        // what happened in a neutral tone and, unlike the email-link banner,
+        // leaves no impression that something went wrong. The flag is stripped
+        // from the URL for the same reason: a refresh should not replay it.
+        const AUTH_CANCELLED = /[?&]auth=cancelled(?=&|$)/;
+
+        function showAuthCancelledBanner() {
+            const search = window.location.search || '';
+            if (!AUTH_CANCELLED.test(search)) return;
+
+            const banner = document.getElementById('auth-cancelled-banner');
+            if (!banner) return;
+
+            banner.style.display = 'block';
+            banner.textContent = "GitHub sign-in was cancelled, so you're not " +
+                "signed in. Nothing went wrong — you can try again whenever " +
+                "you like.";
+
+            const cleaned = search
+                .replace(AUTH_CANCELLED, '')
+                .replace(/^&/, '?')
+                .replace(/\?$/, '');
+            window.history.replaceState(null, '', window.location.pathname + cleaned + window.location.hash);
+        }
+
         // Run auth check immediately on script load
         checkAuth();
+        showAuthCancelledBanner();
         showAuthErrorBanner();
 
         async function loadHomepageProjects() {
