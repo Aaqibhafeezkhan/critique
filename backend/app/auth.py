@@ -259,15 +259,50 @@ def github_login(
     return response
 
 
+# Indicator appended to the homepage URL when the visitor cancels on GitHub's
+# consent screen. There is no flash-message system, so the callback reports the
+# outcome through the query string and the homepage turns it into a banner.
+AUTH_CANCELLED_INDICATOR = "/?auth=cancelled"
+
+
+def _oauth_cancelled_response(remaining: list) -> RedirectResponse:
+    """Friendly outcome for a GitHub OAuth attempt the visitor did not complete.
+
+    Pressing "Cancel" on GitHub's consent screen is a normal user action, not a
+    failure of ours, so this is not an error response. Two bookkeeping steps
+    still have to happen, exactly as on the failure path:
+
+    * the accepted state is consumed, so the browser is not left holding an
+      in-flight attempt it can never finish (and which would otherwise linger
+      for the rest of its ten-minute life);
+    * ``critique_return_to`` is cleared, so a later, unrelated login does not
+      suddenly bounce the visitor back to a page they asked for before they
+      changed their mind.
+
+    The target is a fixed literal, so no open-redirect validation is involved.
+    """
+    response = RedirectResponse(AUTH_CANCELLED_INDICATOR)
+    response.delete_cookie(RETURN_TO_COOKIE_NAME)
+    _set_pending_states_cookie(response, remaining)
+    return response
+
+
 @router.get("/callback")
 async def github_callback(
-    code: str,
     request: Request,
+    code: Optional[str] = None,
     state: Optional[str] = None,
+    error: Optional[str] = None,
     db: Session = Depends(get_db),
     _: None = Depends(rate_limit("auth")),
 ):
-    """Handle GitHub OAuth callback, validating state, and create session."""
+    """Handle GitHub OAuth callback, validating state, and create session.
+
+    GitHub sends the browser back in one of two shapes: ``?code=...&state=...``
+    when the visitor authorises the app, and ``?error=access_denied&state=...``
+    with no ``code`` when they press Cancel. Both carry the state we issued, so
+    both are gated on it before anything else happens.
+    """
     # Validate state before contacting GitHub: missing, unknown, expired,
     # forged, or replayed states are rejected outright.
     pending = _load_pending_states(request.cookies.get(OAUTH_STATE_COOKIE_NAME))
@@ -277,6 +312,14 @@ async def github_callback(
     # Single-use: this state is dropped from the browser's pending list on the
     # response we are about to return, success or failure.
     remaining = [s for s in pending if not hmac.compare_digest(s, state)]
+
+    # Cancellation (or any other outcome GitHub reports through `error`), and
+    # the no-code-at-all case, never reach the token exchange. Handling them
+    # here keeps the visitor out of a framework-generated 422 validation blob.
+    # No session is issued on this path, so nothing about it can authenticate
+    # anyone.
+    if error or not code:
+        return _oauth_cancelled_response(remaining)
 
     async with httpx.AsyncClient() as client:
         token_response = await client.post(
