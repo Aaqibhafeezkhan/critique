@@ -39,7 +39,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-预期：**346 passed**。请先安装 [Node.js](https://nodejs.org) —— 前端渲染测试需要
+预期：**pytest passes**。请先安装 [Node.js](https://nodejs.org) —— 前端渲染测试需要
 `node` 在 PATH 中，否则这些测试会被跳过。
 
 想获得更快的反馈循环，可以只运行单个测试文件、某个测试函数，或按关键字匹配：

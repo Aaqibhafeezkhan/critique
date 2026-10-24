@@ -40,7 +40,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-期待値：**346 passed**。まず [Node.js](https://nodejs.org) をインストールしてください ——
+期待値：**pytest passes**。まず [Node.js](https://nodejs.org) をインストールしてください ——
 フロントエンドのレンダリングテストは `node` が PATH 上にあることを必要とし、
 無いとスキップされます。
 

@@ -41,7 +41,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-Resultado esperado: **346 passed**. Instala primero [Node.js](https://nodejs.org) —
+Resultado esperado: **pytest passes**. Instala primero [Node.js](https://nodejs.org) —
 las pruebas de renderizado del frontend necesitan `node` en el PATH y se omiten
 sin él.
 
