@@ -299,7 +299,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-501 tests currently pass. The suite covers API behavior, CSRF, rate
+The suite passes cleanly. It covers API behavior, CSRF, rate
 limiting, ownership checks, privacy rules, ranking, XSS, analytics
 validation, authentication flows, SEO endpoints, and frontend rendering
 through a Node-based DOM harness (skipped when Node.js is unavailable).
