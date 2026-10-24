@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import func, update
 from app.database import get_db, in_int64_range
@@ -19,6 +19,36 @@ from app.ranking import calculate_project_score, get_match_reason, calculate_nee
 from datetime import datetime, timedelta, timezone
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
+
+
+def _latest_active_question_subquery(db: Session):
+    """Return one row per project with its newest active question text.
+
+    ROW_NUMBER is supported by both SQLite and PostgreSQL. The question ID is
+    a deterministic tie-breaker when two questions share the same timestamp.
+    """
+    ranked_questions = (
+        db.query(
+            Question.project_id.label("project_id"),
+            Question.text.label("question_text"),
+            func.row_number()
+            .over(
+                partition_by=Question.project_id,
+                order_by=(Question.created_at.desc(), Question.id.desc()),
+            )
+            .label("question_rank"),
+        )
+        .filter(Question.is_active == True)
+        .subquery()
+    )
+    return (
+        db.query(
+            ranked_questions.c.project_id,
+            ranked_questions.c.question_text,
+        )
+        .filter(ranked_questions.c.question_rank == 1)
+        .subquery()
+    )
 
 
 @router.post("/", response_model=ProjectWithQuestion, status_code=201)
@@ -82,17 +112,8 @@ def list_projects(
         )
         recent_viewed = {v[0] for v in recent_views}
 
-    # Get candidate projects with question text
-    # SQLite-compatible: use GROUP BY to get latest active question per project
-    question_subq = (
-        db.query(
-            Question.project_id,
-            func.max(Question.text).label("question_text"),
-        )
-        .filter(Question.is_active == True)
-        .group_by(Question.project_id)
-        .subquery()
-    )
+    # Get candidate projects with the latest active question text.
+    question_subq = _latest_active_question_subquery(db)
 
     response_count_subq = (
         db.query(
@@ -222,16 +243,7 @@ def list_my_projects(
     user: User = Depends(get_current_user),
 ):
     """List projects owned by the current user."""
-    question_subq = (
-        db.query(
-            Question.project_id,
-            Question.text.label("question_text"),
-        )
-        .filter(Question.is_active == True)
-        .distinct(Question.project_id)
-        .order_by(Question.project_id, Question.created_at.desc())
-        .subquery()
-    )
+    question_subq = _latest_active_question_subquery(db)
 
     response_count_subq = (
         db.query(
