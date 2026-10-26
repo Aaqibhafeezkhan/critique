@@ -72,7 +72,7 @@ pytestmark = [
 ]
 ```
 
-The `frontend_render` marker is required by the CI collection guard. CI fails if a frontend-render test module is missing the marker, or if `node` is missing and the marked render tests would otherwise be skipped.
+The `frontend_render` marker is what lets the CI collection guard identify render tests. CI fails if `node` is missing and marked render tests would otherwise be skipped; a module missing the marker is not yet caught automatically (see [#154](https://github.com/BistaDinesh03/critique/issues/154)).
 
 To run only the frontend-render tests locally:
 

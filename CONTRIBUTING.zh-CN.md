@@ -46,7 +46,7 @@ pytestmark = [
 ]
 ```
 
-CI 的 collection guard 依赖 `frontend_render` 标记来识别前端渲染测试。如果前端渲染测试模块缺少该标记，CI 会失败；如果 CI 中缺少 `node`，标记的渲染测试原本会被跳过，CI 也会因此失败。
+`frontend_render` 标记用于让 CI 的 collection guard 识别前端渲染测试。如果 CI 中缺少 `node`，并且标记的渲染测试因此会被跳过，CI 会失败；目前，如果测试模块缺少该标记，还不会被自动检测到（请参阅 issue #154）。
 
 要在本地只运行前端渲染测试：
 

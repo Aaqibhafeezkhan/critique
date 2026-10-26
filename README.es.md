@@ -303,7 +303,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-Actualmente pasan 501 pruebas. La suite cubre el comportamiento de la API, CSRF,
+La suite de pruebas pasa correctamente. La suite cubre el comportamiento de la API, CSRF,
 limitación de tasa, comprobaciones de propiedad, reglas de privacidad, ranking,
 XSS, validación analítica, flujos de autenticación, endpoints de SEO y el
 renderizado del frontend mediante un arnés DOM basado en Node (se omite si no

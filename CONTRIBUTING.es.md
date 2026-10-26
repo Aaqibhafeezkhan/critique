@@ -57,7 +57,7 @@ pytestmark = [
 ]
 ```
 
-El collection guard de CI depende de la marca `frontend_render` para identificar las pruebas de renderizado del frontend. CI falla si un módulo de pruebas de renderizado del frontend no tiene esta marca, o si falta `node` en CI y las pruebas de renderizado marcadas se omitirían.
+El collection guard de CI depende de la marca `frontend_render` para identificar las pruebas de renderizado del frontend. CI falla si falta `node` en CI y las pruebas de renderizado marcadas se omitirían; actualmente, un módulo que no tenga la marca todavía no se detecta automáticamente (consulta [#154](https://github.com/BistaDinesh03/critique/issues/154)).
 
 Para ejecutar solo las pruebas de renderizado del frontend en local:
 
