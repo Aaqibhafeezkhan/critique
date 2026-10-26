@@ -280,7 +280,7 @@ cd backend
 python -m pytest tests/ -q
 ```
 
-目前有 501 个测试通过。测试套件覆盖 API 行为、CSRF、限流、所有权检查、
+测试套件通过所有测试。测试套件覆盖 API 行为、CSRF、限流、所有权检查、
 隐私规则、排序、XSS、分析校验、身份验证流程、SEO 端点，以及通过基于 Node 的
 DOM 测试装置进行的前端渲染测试（无 Node.js 时跳过）。
 
