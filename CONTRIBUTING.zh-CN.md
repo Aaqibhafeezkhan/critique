@@ -34,6 +34,26 @@ uvicorn app.main:app --reload
 
 ### 运行测试
 
+添加新的前端渲染测试模块时，请复制以下模块级 `pytestmark`：
+
+```python
+pytestmark = [
+    pytest.mark.frontend_render,
+    pytest.mark.skipif(
+        shutil.which("node") is None,
+        reason="node is required to run the frontend rendering harness",
+    ),
+]
+```
+
+CI 的 collection guard 依赖 `frontend_render` 标记来识别前端渲染测试。如果前端渲染测试模块缺少该标记，CI 会失败；如果 CI 中缺少 `node`，标记的渲染测试原本会被跳过，CI 也会因此失败。
+
+要在本地只运行前端渲染测试：
+
+```bash
+python -m pytest tests/ -m frontend_render -q
+```
+
 ```bash
 cd backend
 python -m pytest tests/ -q

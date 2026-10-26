@@ -60,6 +60,26 @@ change affects frontend rendering. In CI the behavior is deliberately the
 opposite: the collection guard in `backend/tests/conftest.py` fails the run
 when `node` is missing, so render tests can never skip silently there.
 
+When adding a frontend-render test module, copy this module-level `pytestmark` block:
+
+```python
+pytestmark = [
+    pytest.mark.frontend_render,
+    pytest.mark.skipif(
+        shutil.which("node") is None,
+        reason="node is required to run the frontend rendering harness",
+    ),
+]
+```
+
+The `frontend_render` marker is required by the CI collection guard. CI fails if a frontend-render test module is missing the marker, or if `node` is missing and the marked render tests would otherwise be skipped.
+
+To run only the frontend-render tests locally:
+
+```bash
+python -m pytest tests/ -m frontend_render -q
+```
+
 ## Development Guidelines
 
 ### Keep it simple

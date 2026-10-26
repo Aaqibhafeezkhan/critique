@@ -44,6 +44,26 @@ python -m pytest tests/ -q
 フロントエンドのレンダリングテストは `node` が PATH 上にあることを必要とし、
 無いとスキップされます。
 
+新しいフロントエンドレンダリングテストモジュールを追加する場合は、次のモジュールレベルの `pytestmark` をコピーしてください：
+
+```python
+pytestmark = [
+    pytest.mark.frontend_render,
+    pytest.mark.skipif(
+        shutil.which("node") is None,
+        reason="node is required to run the frontend rendering harness",
+    ),
+]
+```
+
+CI の collection guard は `frontend_render` マーカーを使用してフロントエンドレンダリングテストを識別します。フロントエンドレンダリングテストモジュールにこのマーカーがない場合、CI は失敗します。また、CI で `node` が見つからず、マークされたレンダリングテストがスキップされる場合も CI は失敗します。
+
+ローカルでフロントエンドレンダリングテストだけを実行するには：
+
+```bash
+python -m pytest tests/ -m frontend_render -q
+```
+
 より速いフィードバックが欲しい場合は、単一のテストファイル、特定のテスト関数、
 またはキーワードで絞り込めます：
 
