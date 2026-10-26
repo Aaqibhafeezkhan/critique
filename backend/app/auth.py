@@ -8,6 +8,7 @@ from app.database import get_db
 from app.models import User
 from app.csrf import generate_csrf_token, set_csrf_cookie, require_csrf
 from app.rate_limit import rate_limit
+from app.ip_hash import hash_ip as _shared_hash_ip
 import hashlib
 import hmac
 import secrets
@@ -441,7 +442,8 @@ def _hash_token(raw_token: str) -> str:
 
 
 def _hash_ip(ip: str) -> str:
-    return hashlib.sha256(ip.encode("utf-8")).hexdigest()
+    """Hash an IP address using the shared keyed hashing helper."""
+    return _shared_hash_ip(ip)
 
 
 def _client_ip_for_hash(request: Request) -> str:
