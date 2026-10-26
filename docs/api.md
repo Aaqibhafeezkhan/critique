@@ -100,6 +100,16 @@ else is ignored.
 | GET | `/robots.txt` | Allows public crawling; disallows `/my-projects`, `/api/`, `/auth/`, `/health`. |
 | GET | `/sitemap.xml` | Homepage, `/discover`, and every project page (dynamic). |
 
+Every absolute URL in both endpoints (the `Sitemap:` line in `/robots.txt`
+and each `<loc>` in `/sitemap.xml`) is built from `settings.APP_URL`, read per
+request. Surrounding whitespace and any trailing slash are stripped
+(`https://critique.page/` becomes `https://critique.page`); if `APP_URL` is
+unset or blank, the origin falls back to `http://127.0.0.1:8000`. An absolute
+origin is required because crawlers cannot resolve a root-relative `<loc>`,
+and the `Sitemap:` line is specified as an absolute URL. Self-hosted
+deployments should set `APP_URL` to their public origin so crawlers are
+pointed at the right site.
+
 ## Pages and misc
 
 | Method | Path | Notes |
