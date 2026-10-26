@@ -1,5 +1,4 @@
-﻿import hashlib
-from datetime import datetime, timezone
+﻿from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.database import get_db, in_int64_range
@@ -8,13 +7,14 @@ from app.schemas import ResponseCreate, ResponseOut, ResponseOwnerOut
 from app.auth import get_current_user, get_current_user_optional
 from app.csrf import require_csrf
 from app.rate_limit import rate_limit
+from app.ip_hash import hash_ip as _hash_ip
 
 router = APIRouter(prefix="/api/projects", tags=["responses"])
 
 
 def hash_ip(ip: str) -> str:
     """Hash an IP address for privacy-preserving duplicate detection."""
-    return hashlib.sha256(ip.encode()).hexdigest()
+    return _hash_ip(ip)
 
 
 @router.post("/{project_id}/responses", response_model=ResponseOut, status_code=201)
