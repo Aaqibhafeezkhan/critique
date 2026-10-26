@@ -1,4 +1,4 @@
-﻿
+
 import hashlib
 import re
 import subprocess
