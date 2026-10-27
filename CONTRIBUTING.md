@@ -231,6 +231,10 @@ project's security-relevant behavior. For anything that is not a
 vulnerability, [issue #1](https://github.com/BistaDinesh03/critique/issues/1)
 is a good place to ask.
 
+If you find Critique useful or appreciate the project, consider starring the
+repository. It helps others discover the project. Starring is entirely
+optional and has no effect on issue assignment, reviews, or merging.
+
 ## License
 
 By contributing, you agree your work will be licensed under the MIT License.
