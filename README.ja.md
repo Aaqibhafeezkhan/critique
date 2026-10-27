@@ -264,7 +264,7 @@ gitignore されています —— 実際の認証情報は決してコミッ�
 |---|---|---|
 | `APP_ENV` | `development` または `production` | `development` |
 | `APP_URL` | 公開ベース URL | `http://127.0.0.1:8000` |
-| `SECRET_KEY` | セッショントークンと OAuth state を署名 | デフォルトなし —— 生成：`python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SECRET_KEY` | セッショントークンと OAuth state を署名 | 本番環境では必須（未設定の場合、アプリは起動を拒否します）。本番以外で未設定の場合はプロセスごとのランダムなキーが使われるため、再起動後にセッションは維持されません。生成コマンド：`python -c "import secrets; print(secrets.token_hex(32))"` |
 | `DATABASE_URL` | データベース接続文字列 | `sqlite:///./critique.db`；本番は PostgreSQL を使用 |
 | `GITHUB_CLIENT_ID` | GitHub OAuth アプリのクライアント ID | 任意 —— GitHub ログインを有効化 |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth アプリのシークレット | 任意 |

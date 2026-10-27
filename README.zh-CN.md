@@ -256,7 +256,7 @@ uvicorn app.main:app --reload
 |---|---|---|
 | `APP_ENV` | `development` 或 `production` | `development` |
 | `APP_URL` | 公开的基础 URL | `http://127.0.0.1:8000` |
-| `SECRET_KEY` | 为会话令牌和 OAuth state 签名 | 无默认值 —— 生成：`python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SECRET_KEY` | 为会话令牌和 OAuth state 签名 | 生产环境必填（未设置时应用拒绝启动）；非生产环境中，未设置时会使用随机的进程级密钥，因此重启后会话不会保留。生成命令：`python -c "import secrets; print(secrets.token_hex(32))"` |
 | `DATABASE_URL` | 数据库连接字符串 | `sqlite:///./critique.db`；生产环境使用 PostgreSQL |
 | `GITHUB_CLIENT_ID` | GitHub OAuth 应用客户端 ID | 可选 —— 启用 GitHub 登录 |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth 应用密钥 | 可选 |
