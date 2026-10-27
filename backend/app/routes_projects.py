@@ -333,6 +333,8 @@ def delete_project(
     __: None = Depends(rate_limit("project_delete")),
 ):
     """Delete a project. Only the owner can delete it."""
+    if not in_int64_range(project_id):
+        raise HTTPException(status_code=404, detail="Project not found")
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
