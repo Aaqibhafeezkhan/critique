@@ -45,6 +45,26 @@ Resultado esperado: **pytest passes**. Instala primero [Node.js](https://nodejs.
 las pruebas de renderizado del frontend necesitan `node` en el PATH y se omiten
 sin él.
 
+Al añadir un nuevo módulo de pruebas de renderizado del frontend, copia este bloque `pytestmark` a nivel de módulo:
+
+```python
+pytestmark = [
+    pytest.mark.frontend_render,
+    pytest.mark.skipif(
+        shutil.which("node") is None,
+        reason="node is required to run the frontend rendering harness",
+    ),
+]
+```
+
+El collection guard de CI depende de la marca `frontend_render` para identificar las pruebas de renderizado del frontend. CI falla si falta `node` en CI y las pruebas de renderizado marcadas se omitirían; actualmente, un módulo que no tenga la marca todavía no se detecta automáticamente (consulta [#154](https://github.com/BistaDinesh03/critique/issues/154)).
+
+Para ejecutar solo las pruebas de renderizado del frontend en local:
+
+```bash
+python -m pytest tests/ -m frontend_render -q
+```
+
 Para un ciclo de retroalimentación más rápido, ejecuta un solo archivo de pruebas,
 una función concreta, o las que coincidan con una palabra clave:
 
