@@ -23,7 +23,7 @@ HARNESS = Path(__file__).resolve().parent / "frontend_render_harness.js"
 def test_each_frontend_page_has_one_top_level_heading():
     for page in sorted(FRONTEND_DIR.glob("*.html")):
         html = page.read_text(encoding="utf-8")
-        headings = re.findall(r"<h1(?:\\s|>)", html, flags=re.IGNORECASE)
+        headings = re.findall(r"<h1(?:\s|>)", html, flags=re.IGNORECASE)
         assert len(headings) == 1, f"{page.name} has {len(headings)} <h1> headings"
 
 
