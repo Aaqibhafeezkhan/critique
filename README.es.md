@@ -277,7 +277,7 @@ gitignore — nunca subas credenciales reales.
 |---|---|---|
 | `APP_ENV` | `development` o `production` | `development` |
 | `APP_URL` | URL base pública | `http://127.0.0.1:8000` |
-| `SECRET_KEY` | Firma los tokens de sesión y el estado OAuth | Sin valor por defecto — genera: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SECRET_KEY` | Firma los tokens de sesión y el estado OAuth | Obligatoria en producción (la aplicación no se inicia si falta). Fuera de producción, si no se define, se usa una clave aleatoria por proceso, por lo que las sesiones no sobreviven a un reinicio. Generar: `python -c "import secrets; print(secrets.token_hex(32))"` |
 | `DATABASE_URL` | Cadena de conexión a la base de datos | `sqlite:///./critique.db`; usa PostgreSQL en producción |
 | `GITHUB_CLIENT_ID` | ID de cliente de la app OAuth de GitHub | Opcional — habilita el inicio de sesión con GitHub |
 | `GITHUB_CLIENT_SECRET` | Secreto de la app OAuth de GitHub | Opcional |
