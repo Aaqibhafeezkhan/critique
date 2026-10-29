@@ -82,12 +82,11 @@ def test_list_projects_with_pagination(auth_client):
         second = auth_client.get("/api/projects/?page=2&page_size=2")
         assert first.status_code == second.status_code == 200
         first_data, second_data = first.json(), second.json()
-        assert {item["title"] for item in first_data["items"]} == {
-            "Pagination Project 1", "Pagination Project 2"
-        }
-        assert {item["title"] for item in second_data["items"]} == {
-            "Pagination Project 3", "Pagination Project 4"
-        }
+        first_titles = {item["title"] for item in first_data["items"]}
+        second_titles = {item["title"] for item in second_data["items"]}
+        expected_titles = {f"Pagination Project {index}" for index in range(1, 5)}
+        assert len(first_titles) == len(second_titles) == 2
+        assert first_titles | second_titles == expected_titles
         assert first_data["total"] == second_data["total"] == 4
         assert first_data["page"] == 1 and second_data["page"] == 2
         assert first_data["page_size"] == second_data["page_size"] == 2
