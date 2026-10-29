@@ -229,7 +229,7 @@ def list_projects(
 
     return PaginatedProjects(
         items=items,
-        total=len(final_ranked),
+        total=len(items),
         page=page,
         page_size=page_size,
         total_pages=max(1, (len(final_ranked) + page_size - 1) // page_size),
