@@ -180,6 +180,8 @@ def test_impressions_still_count_every_shown_project(seed_projects):
 
     first = client.get("/api/projects/?page=1&page_size=50").json()
     shown = [item["id"] for item in first["items"]]
+    assert shown, "project list must not be empty"
+    assert set(project_ids) <= set(shown), "seeded projects must be listed"
 
     after_first = impressions()
     for project_id in project_ids:
