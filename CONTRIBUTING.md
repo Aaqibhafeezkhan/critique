@@ -60,6 +60,26 @@ change affects frontend rendering. In CI the behavior is deliberately the
 opposite: the collection guard in `backend/tests/conftest.py` fails the run
 when `node` is missing, so render tests can never skip silently there.
 
+When adding a frontend-render test module, copy this module-level `pytestmark` block:
+
+```python
+pytestmark = [
+    pytest.mark.frontend_render,
+    pytest.mark.skipif(
+        shutil.which("node") is None,
+        reason="node is required to run the frontend rendering harness",
+    ),
+]
+```
+
+The `frontend_render` marker is what lets the CI collection guard identify render tests. CI fails if `node` is missing and marked render tests would otherwise be skipped; a module missing the marker is not yet caught automatically (see [#154](https://github.com/BistaDinesh03/critique/issues/154)).
+
+To run only the frontend-render tests locally:
+
+```bash
+python -m pytest tests/ -m frontend_render -q
+```
+
 ## Development Guidelines
 
 ### Keep it simple
@@ -91,6 +111,8 @@ Critique intentionally avoids complexity. Before adding anything, ask:
 - No secrets, unrelated changes, or test results you did not actually run
 - Link any related issues
 - Be respectful and patient
+
+For a step-by-step example of claiming an issue, working in a fork, running relevant checks, and opening a pull request, see the [first-contributor walkthrough](docs/first-contributors.md).
 
 ## Finding Something to Work On
 
@@ -210,6 +232,10 @@ process described in [SECURITY.md](SECURITY.md), which also documents the
 project's security-relevant behavior. For anything that is not a
 vulnerability, [issue #1](https://github.com/BistaDinesh03/critique/issues/1)
 is a good place to ask.
+
+If you find Critique useful or appreciate the project, consider starring the
+repository. It helps others discover the project. Starring is entirely
+optional and has no effect on issue assignment, reviews, or merging.
 
 ## License
 

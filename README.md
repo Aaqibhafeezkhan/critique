@@ -273,7 +273,7 @@ never commit real credentials.
 |---|---|---|
 | `APP_ENV` | `development` or `production` | `development` |
 | `APP_URL` | Public base URL | `http://127.0.0.1:8000` |
-| `SECRET_KEY` | Signs session tokens and OAuth state | No default — generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SECRET_KEY` | Signs session tokens and OAuth state | Required in production (the app refuses to start without it); outside production, an unset value uses a random per-process key, so sessions do not survive a restart. Generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
 | `DATABASE_URL` | Database connection string | `sqlite:///./critique.db`; use PostgreSQL in production |
 | `GITHUB_CLIENT_ID` | GitHub OAuth app client ID | Optional — enables GitHub login |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth app secret | Optional |
@@ -399,8 +399,7 @@ product feedback are welcome. A good place to start is an issue labeled
 4. Run the test suite
 5. Open a pull request
 
-[CONTRIBUTING.md](CONTRIBUTING.md) has the full guidelines, and
-[SECURITY.md](SECURITY.md) explains how to report vulnerabilities.
+[CONTRIBUTING.md](CONTRIBUTING.md) has the full guidelines, and the [first-contributor walkthrough](docs/first-contributors.md) shows how to take one issue from claiming it to opening a pull request. [SECURITY.md](SECURITY.md) explains how to report vulnerabilities.
 
 **Looking for something to work on?** Start with the curated plan in
 [docs/issue-roadmap.md](docs/issue-roadmap.md) — 50 reviewed issues with the

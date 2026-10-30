@@ -96,8 +96,7 @@ def list_projects(
 ):
     """List projects with ranking. Public endpoint."""
     # No SELECT count(*) here: the paginated response is built from the ranked
-    # result (total=len(items), total_pages from len(final_ranked)), so the
-    # total row count was computed on every request and never used. Dropping it
+    # result, so no separate count query is needed. Dropping it
     # removes one database round trip from the busiest read endpoint.
     offset = (page - 1) * page_size
 
@@ -133,6 +132,7 @@ def list_projects(
         )
         .outerjoin(question_subq, question_subq.c.project_id == Project.id)
         .outerjoin(response_count_subq, response_count_subq.c.project_id == Project.id)
+        .order_by(Project.id.asc())
         .all()
     )
 
@@ -171,8 +171,8 @@ def list_projects(
             "match_reason": match_reason,
         })
 
-    # Sort by score descending
-    ranked_items.sort(key=lambda x: x["score"], reverse=True)
+    # Sort by score descending with project id ascending as deterministic tie-breaker
+    ranked_items.sort(key=lambda x: (-x["score"], x["project"].id))
 
     # Apply diversity: max 1 project per owner in first 6 results
     first_six = []
@@ -333,6 +333,8 @@ def delete_project(
     __: None = Depends(rate_limit("project_delete")),
 ):
     """Delete a project. Only the owner can delete it."""
+    if not in_int64_range(project_id):
+        raise HTTPException(status_code=404, detail="Project not found")
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
