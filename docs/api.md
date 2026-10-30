@@ -115,6 +115,7 @@ pointed at the right site.
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/` `/discover` `/my-projects` `/project/{id}` `/project/{id}/results` | HTML pages. A CSRF cookie is issued with each page response. |
+| GET | `/google8ffd0ae5f931d1e6.html` | Google Search Console site-verification file. |
 | GET | `/health` | `{"status": "ok"}` — uptime probe. |
 | GET | `/docs`, `/redoc` | FastAPI-generated API documentation. |
 | GET | `/static/*` | CSS/JS use `Cache-Control: no-cache` (revalidation); images use `Cache-Control: public, max-age=86400`. |
