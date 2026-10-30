@@ -273,7 +273,7 @@ never commit real credentials.
 |---|---|---|
 | `APP_ENV` | `development` or `production` | `development` |
 | `APP_URL` | Public base URL | `http://127.0.0.1:8000` |
-| `SECRET_KEY` | Signs session tokens and OAuth state | No default — generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SECRET_KEY` | Signs session tokens and OAuth state | Required in production (the app refuses to start without it); outside production, an unset value uses a random per-process key, so sessions do not survive a restart. Generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
 | `DATABASE_URL` | Database connection string | `sqlite:///./critique.db`; use PostgreSQL in production |
 | `GITHUB_CLIENT_ID` | GitHub OAuth app client ID | Optional — enables GitHub login |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth app secret | Optional |
